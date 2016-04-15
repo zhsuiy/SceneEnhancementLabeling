@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
 VisualStudioVersion = 14.0.23107.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SceneEnhancementLabeling", "SceneEnhancementLabeling\SceneEnhancementLabeling.csproj", "{8AFB58E2-5A68-4126-9B75-35578DC66805}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SceneEnhancementLabeling", "SceneEnhancementLabeling\SceneEnhancementLabeling.csproj", "{2E5C8116-489D-4C9D-B698-5C6B6695FD50}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,10 +11,10 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{8AFB58E2-5A68-4126-9B75-35578DC66805}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8AFB58E2-5A68-4126-9B75-35578DC66805}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8AFB58E2-5A68-4126-9B75-35578DC66805}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8AFB58E2-5A68-4126-9B75-35578DC66805}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2E5C8116-489D-4C9D-B698-5C6B6695FD50}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2E5C8116-489D-4C9D-B698-5C6B6695FD50}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2E5C8116-489D-4C9D-B698-5C6B6695FD50}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2E5C8116-489D-4C9D-B698-5C6B6695FD50}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

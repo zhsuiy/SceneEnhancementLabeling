@@ -4,7 +4,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{8AFB58E2-5A68-4126-9B75-35578DC66805}</ProjectGuid>
+    <ProjectGuid>{2E5C8116-489D-4C9D-B698-5C6B6695FD50}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>SceneEnhancementLabeling</RootNamespace>
