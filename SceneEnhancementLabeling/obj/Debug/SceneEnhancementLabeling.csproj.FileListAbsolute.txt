@@ -1,1 +1,0 @@
-H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\SceneEnhancementLabeling\bin\Debug\SceneEnhancementLabeling.exe.config

@@ -4,9 +4,38 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SceneEnhancementLabeling"
+        xmlns:viewModel="clr-namespace:SceneEnhancementLabeling.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="350" Width="525">
+        Title="MainWindow" Height="768" Width="1280"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    
+    <Window.InputBindings>
+        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenFolderCommand}"/>
+    </Window.InputBindings>
     <Grid>
-        
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_File" Height="27" Width="50">
+                    <MenuItem Header="_Open" Command="{Binding OpenFolderCommand}" InputGestureText="Ctrl+O"/>
+                    <MenuItem Header="_Close"/>
+                    <MenuItem Header="_Save"/>
+                </MenuItem>
+            </Menu>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="3*"/>
+                    <ColumnDefinition/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="4*"/>
+                    <RowDefinition/>
+                </Grid.RowDefinitions>
+                <Grid>
+                    <Image Source="{Binding Bitmap}" Stretch="Uniform"/>
+                    <Button HorizontalAlignment="Left" VerticalAlignment="Center" Content="&lt;" Width="30" Height="20" Visibility="{Binding CanPrevious, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding PreviousCommand}"/>
+                    <Button HorizontalAlignment="Right" VerticalAlignment="Center" Content="&gt;" Width="30" Height="20" Visibility="{Binding CanNext, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding NextCommand}"/>
+                </Grid>
+            </Grid>
+        </DockPanel>
     </Grid>
 </Window>
