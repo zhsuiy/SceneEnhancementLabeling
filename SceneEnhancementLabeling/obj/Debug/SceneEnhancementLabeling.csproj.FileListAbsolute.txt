@@ -1,0 +1,14 @@
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\bin\Debug\SceneEnhancementLabeling.exe.config
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\bin\Debug\SceneEnhancementLabeling.exe
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\bin\Debug\SceneEnhancementLabeling.pdb
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.csprojResolveAssemblyReference.cache
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\MainWindow.g.cs
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\App.g.cs
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling_MarkupCompile.cache
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling_MarkupCompile.lref
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\MainWindow.baml
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.g.resources
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.Properties.Resources.resources
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.csproj.GenerateResource.Cache
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.exe
+H:\workspace\SceneEnhancementLabeling\SceneEnhancementLabeling\obj\Debug\SceneEnhancementLabeling.pdb
