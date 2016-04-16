@@ -2,8 +2,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Windows;
 using System.Windows.Forms;
 using System.Windows.Input;
+using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -168,6 +170,7 @@ namespace SceneEnhancementLabeling.ViewModel
                 bitmap.UriSource = new Uri(file.Path, UriKind.Absolute);
                 bitmap.EndInit();
                 Bitmap = bitmap;
+                GetPixels(bitmap);
             }
             else
             {
@@ -187,11 +190,130 @@ namespace SceneEnhancementLabeling.ViewModel
                 bitmap.UriSource = new Uri(file.Path, UriKind.Absolute);
                 bitmap.EndInit();
                 Bitmap = bitmap;
+                GetPixels(bitmap);
             }
             else
             {
                 _selectedIndex = 0;
             }
+        }
+
+        private void GetPixels(BitmapImage bitmap)
+        {
+            int stride = bitmap.PixelWidth * (bitmap.Format.BitsPerPixel / 8);
+            byte[] pixels = new byte[bitmap.PixelHeight * stride];
+            bitmap.CopyPixels(pixels, stride, 0);
+            Pixels = pixels;
+        }
+
+        private void GetColor(int x, out SolidColorBrush brush)
+        {
+            if (Pixels == null)
+            {
+                brush = null;
+                return;
+            }
+
+            //  Get a pixel color like this.
+            Color color = Colors.White;
+            if (Bitmap.Format == PixelFormats.Pbgra32)
+            {
+                color = Color.FromArgb(Pixels[3 + 4 * x], Pixels[2 + 4 * x], Pixels[1 + 4 * x], Pixels[0 + 4 * x]);
+            }
+            else if (Bitmap.Format == PixelFormats.Bgr32)
+            {
+                color = Color.FromArgb(0xFF, Pixels[2 + 3 * x], Pixels[1 + 3 * x], Pixels[0 + 3 * x]);
+            }
+            brush = new SolidColorBrush(color);
+        }
+
+        private SolidColorBrush _color0;
+
+        public SolidColorBrush Color0
+        {
+            get { return _color0; }
+            set
+            {
+                _color0 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private SolidColorBrush _color1;
+
+        public SolidColorBrush Color1
+        {
+            get { return _color1; }
+            set
+            {
+                _color1 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private SolidColorBrush _color2;
+
+        public SolidColorBrush Color2
+        {
+            get { return _color2; }
+            set
+            {
+                _color2 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private SolidColorBrush _color3;
+
+        public SolidColorBrush Color3
+        {
+            get { return _color3; }
+            set
+            {
+                _color3 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private SolidColorBrush _color4;
+
+        public SolidColorBrush Color4
+        {
+            get { return _color4; }
+            set
+            {
+                _color4 = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public byte[] Pixels { get; set; }
+
+        private RelayCommand _startCommand;
+
+        public ICommand StartCommand => _startCommand ?? (_startCommand = new RelayCommand(DoProcess));
+
+        private void DoProcess()
+        {
+            SolidColorBrush color0;
+            GetColor(0, out color0);
+            Color0 = color0;
+
+            SolidColorBrush color1;
+            GetColor(10, out color1);
+            Color1 = color1;
+
+            SolidColorBrush color2;
+            GetColor(20, out color2);
+            Color2 = color2;
+
+            SolidColorBrush color3;
+            GetColor(30, out color3);
+            Color3 = color3;
+
+            SolidColorBrush color4;
+            GetColor(40, out color4);
+            Color4 = color4;
         }
     }
 }
