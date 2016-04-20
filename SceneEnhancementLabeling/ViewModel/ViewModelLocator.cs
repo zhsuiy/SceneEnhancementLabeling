@@ -43,16 +43,24 @@ namespace SceneEnhancementLabeling.ViewModel
             ////}
 
             SimpleIoc.Default.Register<MainViewModel>();
+            SimpleIoc.Default.Register<ExtractColorViewModel>();
+            SimpleIoc.Default.Register<LabelingViewModel>();
         }
 
         public MainViewModel Main
         {
-            get
-            {
-                return ServiceLocator.Current.GetInstance<MainViewModel>();
-            }
+            get { return ServiceLocator.Current.GetInstance<MainViewModel>(); }
         }
-        
+
+        public ExtractColorViewModel ExtractColor
+        {
+            get { return ServiceLocator.Current.GetInstance<ExtractColorViewModel>(); }
+        }
+        public LabelingViewModel Labeling
+        {
+            get { return ServiceLocator.Current.GetInstance<LabelingViewModel>(); }
+        }
+
         public static void Cleanup()
         {
             // TODO Clear the ViewModels

@@ -24,27 +24,17 @@ namespace SceneEnhancementLabeling
         public MainWindow()
         {
             InitializeComponent();
+            Frame.NavigationService.Navigate(new Uri("View/LabelingPage.xaml", UriKind.Relative));
         }
 
-        private void OpenFile_OnClick(object sender, RoutedEventArgs e)
+        private void ExtractColor_OnClick(object sender, RoutedEventArgs e)
         {
-            var dialog = new OpenFileDialog
-            {
-                DefaultExt = ".jpg",
-                FilterIndex = 1
-            };
-            if (dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
-            {
-                var bmp = new BitmapImage();
-                bmp.BeginInit();
-                bmp.UriSource = new Uri(dialog.FileName);
-                bmp.EndInit();
-            }
+            Frame.NavigationService.Navigate(new Uri("View/ExtractColorPage.xaml", UriKind.Relative));
         }
 
-        private void OpenCommandBinding_Executed(object sender, ExecutedRoutedEventArgs e)
+        private void Labeling_OnClick(object sender, RoutedEventArgs e)
         {
-
+            Frame.NavigationService.Navigate(new Uri("View/LabelingPage.xaml", UriKind.Relative));
         }
     }
 }

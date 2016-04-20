@@ -9,65 +9,19 @@
         Title="MainWindow" Height="768" Width="1280"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     
-    <Window.InputBindings>
-        <KeyBinding Key="O" Modifiers="Control" Command="{Binding OpenFolderCommand}"/>
-    </Window.InputBindings>
     <Grid>
+        
         <DockPanel>
             <Menu DockPanel.Dock="Top">
-                <MenuItem Header="_File" Height="27" Width="50">
-                    <MenuItem Header="_Open" Command="{Binding OpenFolderCommand}" InputGestureText="Ctrl+O"/>
-                    <MenuItem Header="_Close"/>
-                    <MenuItem Header="_Save"/>
+                <MenuItem Header="_Home" Height="27">
+                    <MenuItem Header="_Extract 5 Main Color" Click="ExtractColor_OnClick"/>
+                    <MenuItem Header="_Labling" Click="Labeling_OnClick"/>
+                </MenuItem>
+                <MenuItem Header="_Settings" Height="27">
+                    <MenuItem Header="_Load Category" Command="{Binding LoadCategoryCommand}"/>
                 </MenuItem>
             </Menu>
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition/>
-                </Grid.ColumnDefinitions>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="4*"/>
-                    <RowDefinition/>
-                </Grid.RowDefinitions>
-                <Grid>
-                    <Image Source="{Binding Bitmap}" Stretch="Uniform"/>
-                    <Button HorizontalAlignment="Left" VerticalAlignment="Center" Content="&lt;" Width="30" Height="20" Visibility="{Binding CanPrevious, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding PreviousCommand}"/>
-                    <Button HorizontalAlignment="Right" VerticalAlignment="Center" Content="&gt;" Width="30" Height="20" Visibility="{Binding CanNext, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding NextCommand}"/>
-                </Grid>
-                <Grid Grid.Row="0" Grid.Column="1">
-                    <Grid.RowDefinitions>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                        <RowDefinition/>
-                    </Grid.RowDefinitions>
-                    <Grid Margin="20">
-                        <Rectangle Fill="{Binding Color0}"/>
-                        <TextBlock Text="{Binding Color0.Color}"/>
-                    </Grid>
-                    <Grid Margin="20" Grid.Row="1">
-                        <Rectangle Fill="{Binding Color1}"/>
-                        <TextBlock Text="{Binding Color1.Color}"/>
-                    </Grid>
-                    <Grid Margin="20" Grid.Row="2">
-                        <Rectangle Fill="{Binding Color2}"/>
-                        <TextBlock Text="{Binding Color2.Color}"/>
-                    </Grid>
-                    <Grid Margin="20" Grid.Row="3">
-                        <Rectangle Fill="{Binding Color3}"/>
-                        <TextBlock Text="{Binding Color3.Color}"/>
-                    </Grid>
-                    <Grid Margin="20" Grid.Row="4">
-                        <Rectangle Fill="{Binding Color4}"/>
-                        <TextBlock Text="{Binding Color4.Color}"/>
-                    </Grid>
-                </Grid>
-                <Grid Grid.Row="1" Grid.Column="0">
-                    <Button Content="Start" Command="{Binding StartCommand}" Width="100" Height="50"/>
-                </Grid>
-            </Grid>
+            <Frame x:Name="Frame"/>
         </DockPanel>
     </Grid>
 </Window>
