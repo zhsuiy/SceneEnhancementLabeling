@@ -276,8 +276,8 @@ namespace SceneEnhancementLabeling.ViewModel
         public ICommand StartCommand => _startCommand ?? (_startCommand = new RelayCommand(DoProcess));
 
         private int _binH = 10;
-        private int _binS = 10;
-        private int _binV = 10;
+        private int _binS = 2;
+        private int _binV = 2;
 
         private void DoProcess()
         {
@@ -285,7 +285,9 @@ namespace SceneEnhancementLabeling.ViewModel
             double stepS = 1.0 / _binS;
             double stepV = 1.0 / _binV;
 
-            Dictionary<Tuple<int, int, int>, int> binmap = new Dictionary<Tuple<int, int, int>, int>();
+            Dictionary<Tuple<int, int, int>, List<Tuple<double, double, double>>> binmap =
+                new Dictionary<Tuple<int, int, int>, List<Tuple<double, double, double>>>();
+            // new Dictionary<Tuple<int, int, int>, int>();
             //int[,,] bins = new int[_binH,_binS,_binV];
             double[] hsv = new double[3];
             for (int i = 0; i < _imageWidth; i++)
@@ -305,55 +307,38 @@ namespace SceneEnhancementLabeling.ViewModel
                     var tuple = new Tuple<int, int, int>(hi, si, vi);
                     if (binmap.ContainsKey(tuple))
                     {
-                        binmap[tuple]++;
+                        //binmap[tuple]++;
+                        binmap[tuple].Add(new Tuple<double, double, double>(hsv[0], hsv[1], hsv[2]));
                     }
                     else
                     {
-                        binmap.Add(tuple, 1);
+                        //binmap.Add(tuple, 1);
+                        var list = new List<Tuple<double, double, double>>();
+                        list.Add(new Tuple<double, double, double>(hsv[0], hsv[1], hsv[2]));
+                        binmap.Add(tuple, list);
                     }
                 }
             }
 
-            var ordered_binmap = binmap.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            //var ordered_binmap = binmap.OrderByDescending(x => x.Value).ToDictionary(x => x.Key, x => x.Value);
+            var ordered_binmap = binmap.OrderByDescending(x => x.Value.Count).ToDictionary(x => x.Key, x => x.Value);
 
-            var hsvindex = ordered_binmap.ElementAt(0).Key;
-            Color0 = new SolidColorBrush(Hsv2Rgb(hsvindex.Item1 * stepH + 0.5 * stepH, hsvindex.Item2 * stepS + 0.5 * stepS,
-                hsvindex.Item3 * stepV + 0.5 * stepV));
-            hsvindex = ordered_binmap.ElementAt(1).Key;
-            Color1 = new SolidColorBrush(Hsv2Rgb(hsvindex.Item1 * stepH + 0.5 * stepH, hsvindex.Item2 * stepS + 0.5 * stepS,
-                hsvindex.Item3 * stepV + 0.5 * stepV));
-            hsvindex = ordered_binmap.ElementAt(2).Key;
-            Color2 = new SolidColorBrush(Hsv2Rgb(hsvindex.Item1 * stepH + 0.5 * stepH, hsvindex.Item2 * stepS + 0.5 * stepS,
-                hsvindex.Item3 * stepV + 0.5 * stepV));
-            hsvindex = ordered_binmap.ElementAt(3).Key;
-            Color3 = new SolidColorBrush(Hsv2Rgb(hsvindex.Item1 * stepH + 0.5 * stepH, hsvindex.Item2 * stepS + 0.5 * stepS,
-                hsvindex.Item3 * stepV + 0.5 * stepV));
-            hsvindex = ordered_binmap.ElementAt(4).Key;
-            Color4 = new SolidColorBrush(Hsv2Rgb(hsvindex.Item1 * stepH + 0.5 * stepH, hsvindex.Item2 * stepS + 0.5 * stepS,
-                hsvindex.Item3 * stepV + 0.5 * stepV));
+            // var colorlist = new List<Color>();
+            var hsvlist = new List<Tuple<double, double, double>>();
+            for (int i = 0; i < 5; i++)
+            {
+                var tmp = ordered_binmap.ElementAt(i).Value;
+                hsvlist.Add(new Tuple<double, double, double>(tmp.Average(v => v.Item1), tmp.Average(v => v.Item2), tmp.Average(v => v.Item3)));
+            }
 
+            hsvlist = hsvlist.OrderBy(v => v.Item1).ToList();
 
+            Color0 = new SolidColorBrush(Hsv2Rgb(hsvlist[0].Item1, hsvlist[0].Item2, hsvlist[0].Item3));
+            Color1 = new SolidColorBrush(Hsv2Rgb(hsvlist[1].Item1, hsvlist[1].Item2, hsvlist[1].Item3));
+            Color2 = new SolidColorBrush(Hsv2Rgb(hsvlist[2].Item1, hsvlist[2].Item2, hsvlist[2].Item3));
+            Color3 = new SolidColorBrush(Hsv2Rgb(hsvlist[3].Item1, hsvlist[3].Item2, hsvlist[3].Item3));
+            Color4 = new SolidColorBrush(Hsv2Rgb(hsvlist[4].Item1, hsvlist[4].Item2, hsvlist[4].Item3));
 
-            //SolidColorBrush color0;
-            //GetColor(0,0, out color0);
-            //Color0 = color0;
-
-            //SolidColorBrush color1;
-            //GetColor(499, 20,out color1);
-            //Color1 = color1;
-
-            //SolidColorBrush color2;
-
-            //Color color = GetColor(0,400);
-            //Color2 = new SolidColorBrush(color);
-
-            //SolidColorBrush color3;
-            //GetColor(400,400, out color3);
-            //Color3 = color3;
-
-            //SolidColorBrush color4;
-            //GetColor(40,0, out color4);
-            //Color4 = color4;
         }
 
         private double[] Rgb2Hsv(Color color)
