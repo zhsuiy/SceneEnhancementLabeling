@@ -1,0 +1,27 @@
+﻿<Window x:Class="SceneEnhancementLabeling.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:SceneEnhancementLabeling"
+        xmlns:viewModel="clr-namespace:SceneEnhancementLabeling.ViewModel"
+        mc:Ignorable="d"
+        Title="MainWindow" Height="768" Width="1280"
+        DataContext="{Binding Main, Source={StaticResource Locator}}">
+    
+    <Grid>
+        
+        <DockPanel>
+            <Menu DockPanel.Dock="Top">
+                <MenuItem Header="_Home" Height="27">
+                    <MenuItem Header="_Extract 5 Main Color" Click="ExtractColor_OnClick"/>
+                    <MenuItem Header="_Labling" Click="Labeling_OnClick"/>
+                </MenuItem>
+                <MenuItem Header="_Settings" Height="27">
+                    <MenuItem Header="_Load Category" Command="{Binding LoadCategoryCommand}"/>
+                </MenuItem>
+            </Menu>
+            <Frame x:Name="Frame"/>
+        </DockPanel>
+    </Grid>
+</Window>
