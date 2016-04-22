@@ -28,10 +28,9 @@
                     <Grid>
                     <Image Source="{Binding Bitmap}" Stretch="Uniform">
                         <i:Interaction.Behaviors>
-                            <common:ImageBehaviorMouseDownPointSampleToColor TestSource="{Binding Source, Mode=TwoWay}" SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
+                            <common:ImageBehaviorMouseDownPointSampleToColor SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
                         </i:Interaction.Behaviors>
                     </Image>
-                        <Image  Source="{Binding Source}" Stretch="Uniform" Opacity="0.2" IsHitTestVisible="False"/>
                     </Grid>
                     <Button HorizontalAlignment="Left" VerticalAlignment="Center" Content="&lt;" Width="30" Height="20" Visibility="{Binding CanPrevious, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding PreviousCommand}"/>
                     <Button HorizontalAlignment="Right" VerticalAlignment="Center" Content="&gt;" Width="30" Height="20" Visibility="{Binding CanNext, Converter={StaticResource BooleanToVisibilityConverter}}" Command="{Binding NextCommand}"/>
@@ -39,6 +38,7 @@
             </Grid>
             <Grid Grid.Column="1">
                 <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition/>
                 </Grid.RowDefinitions>
@@ -59,15 +59,15 @@
                                         <RowDefinition/>
                                     </Grid.RowDefinitions>
                                     <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Rectangle Fill="{Binding Color0, Mode=TwoWay}" Width="100" Height="50"/>
+                                        <Rectangle Fill="{Binding Color0, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                         <TextBlock Text="{Binding Color0, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
                                     </StackPanel>
                                     <StackPanel Grid.Row="1" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Rectangle Fill="{Binding Color1, Mode=TwoWay}" Width="100" Height="50"/>
+                                        <Rectangle Fill="{Binding Color1, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                         <TextBlock Text="{Binding Color1, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
                                     </StackPanel>
                                     <StackPanel Grid.Row="2" Orientation="Horizontal" VerticalAlignment="Center">
-                                        <Rectangle Fill="{Binding Color2, Mode=TwoWay}" Width="100" Height="50"/>
+                                        <Rectangle Fill="{Binding Color2, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                         <TextBlock Text="{Binding Color2, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
                                     </StackPanel>
                                 </Grid>
@@ -77,6 +77,10 @@
                 </StackPanel>
                 <StackPanel Grid.Row="1" Margin="0,12,0,0">
                     <TextBlock Text="2. Component Labeling" FontSize="20" FontWeight="Bold"/>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Grid.Row="2" VerticalAlignment="Bottom">
+                    <Button Content="Reset" Width="100" Height="50" Margin="12" Command="{Binding ResetCommand}"/>
+                    <Button Content="Save" Width="100" Height="50" Margin="12" Command="{Binding SaveCommand}"/>
                 </StackPanel>
             </Grid>
         </Grid>

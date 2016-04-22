@@ -9,7 +9,6 @@ using System.Windows.Media.Imaging;
 
 namespace SceneEnhancementLabeling.Common
 {
-    [Description("Used to sample the color under mouse for the image when the mouse is pressed. ")]
     public class ImageBehaviorMouseDownPointSampleToColor : Behavior<Image>
     {
         public static readonly DependencyProperty SelectedColorProperty =
@@ -53,20 +52,7 @@ namespace SceneEnhancementLabeling.Common
                 SamplePixelForColor();
             }
         }
-
-        public BitmapSource TestSource
-        {
-            get { return (BitmapSource)GetValue(TestSourceProperty); }
-            set { SetValue(TestSourceProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for TestSource.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty TestSourceProperty =
-            DependencyProperty.Register("TestSource", typeof(BitmapSource), typeof(ImageBehaviorMouseDownPointSampleToColor), new PropertyMetadata(null));
-
-
-
-
+        
         private void SamplePixelForColor()
         {
             // Retrieve the coordinate of the mouse position in relation to the supplied image.
@@ -90,7 +76,6 @@ namespace SceneEnhancementLabeling.Common
                     new Rect(new Point(bounds.X, bounds.Y), new Point(width, height)));
             }
             renderTargetBitmap.Render(dv);
-            TestSource = renderTargetBitmap;
 
             // Make sure that the point is within the dimensions of the image.
             if ((point.X <= renderTargetBitmap.PixelWidth) && (point.Y <= renderTargetBitmap.PixelHeight))

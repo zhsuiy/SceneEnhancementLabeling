@@ -13,7 +13,7 @@ namespace SceneEnhancementLabeling.Models
         [JsonProperty("name")]
         public string Name { get; set; }
 
-        private SolidColorBrush _color0 = new SolidColorBrush(Colors.Yellow);
+        private SolidColorBrush _color0 = new SolidColorBrush(Colors.White);
 
         public SolidColorBrush Color0
         {
@@ -25,7 +25,7 @@ namespace SceneEnhancementLabeling.Models
             }
         }
 
-        private SolidColorBrush _color1 = new SolidColorBrush(Colors.Red);
+        private SolidColorBrush _color1 = new SolidColorBrush(Colors.White);
 
         public SolidColorBrush Color1
         {
@@ -37,7 +37,7 @@ namespace SceneEnhancementLabeling.Models
             }
         }
 
-        private SolidColorBrush _color2 = new SolidColorBrush(Colors.CornflowerBlue);
+        private SolidColorBrush _color2 = new SolidColorBrush(Colors.White);
 
         public SolidColorBrush Color2
         {
