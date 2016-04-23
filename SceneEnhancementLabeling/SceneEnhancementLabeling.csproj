@@ -82,6 +82,8 @@
     </ApplicationDefinition>
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\ImageBehaviorMouseDownPointSampleToColor.cs" />
+    <Compile Include="Common\MessageBoxEx.cs" />
+    <Compile Include="Common\RadioButtonEx.cs" />
     <Compile Include="Models\CategoryItem.cs" />
     <Compile Include="Models\ImageDetail.cs" />
     <Compile Include="ViewModel\ExtractColorViewModel.cs" />

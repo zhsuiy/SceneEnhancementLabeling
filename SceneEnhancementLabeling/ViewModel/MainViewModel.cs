@@ -36,6 +36,7 @@ namespace SceneEnhancementLabeling.ViewModel
                             if (labeling != null)
                             {
                                 labeling.Category = new ObservableCollection<CategoryItem>(list);
+                                labeling.CategoryIndex = 0;
                             }
                         }
                         catch (Exception)

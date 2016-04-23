@@ -4,6 +4,7 @@ using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
 using System.Windows.Forms;
@@ -14,14 +15,15 @@ using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Practices.ServiceLocation;
 using Newtonsoft.Json;
+using SceneEnhancementLabeling.Common;
 using SceneEnhancementLabeling.Models;
-using MessageBox = System.Windows.Forms.MessageBox;
 using MouseEventArgs = System.Windows.Input.MouseEventArgs;
 
 namespace SceneEnhancementLabeling.ViewModel
 {
     public class LabelingViewModel : ViewModelBase
     {
+        #region Default
         private const string DefaultCategoryPath = "SceneEnhancementLabeling.category.json";
         public LabelingViewModel()
         {
@@ -44,6 +46,7 @@ namespace SceneEnhancementLabeling.ViewModel
                         var content = reader.ReadToEnd();
                         var list = JsonConvert.DeserializeObject<List<CategoryItem>>(content);
                         Category = new ObservableCollection<CategoryItem>(list);
+                        CategoryIndex = 0;
                     }
                     catch (Exception)
                     {
@@ -52,6 +55,20 @@ namespace SceneEnhancementLabeling.ViewModel
                 }
             }
         }
+
+        private string _outputPath;
+
+        public string OutputPath
+        {
+            get { return _outputPath; }
+            set
+            {
+                _outputPath = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        #endregion
 
         #region Image
 
@@ -119,6 +136,8 @@ namespace SceneEnhancementLabeling.ViewModel
                         IsBrowseEnabled = false;
                         var path = dialog.SelectedPath;
 
+                        OutputPath = path + "\\Output";
+
                         string[] supportedExtensions = { ".bmp", ".jpeg", ".jpg", ".png", ".tiff" };
                         var files = Directory.GetFiles(path, "*.*").Where(s =>
                         {
@@ -184,6 +203,26 @@ namespace SceneEnhancementLabeling.ViewModel
 
         private void LoadNext()
         {
+            if (IsEditingColor)
+            {
+                var result = System.Windows.Forms.MessageBox.Show(
+                    @"You are labeling current image without save. Do you like to save before loading next ?",
+                    @"Warning",
+                    MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    SaveAll();
+                }
+                else if (result == DialogResult.No)
+                {
+                    IsEditingColor = false;
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             CheckNextState();
             if (_images.Any() && _selectedIndex + 1 < _images.Count)
             {
@@ -194,6 +233,8 @@ namespace SceneEnhancementLabeling.ViewModel
                 bitmap.UriSource = new Uri(file.Path, UriKind.Absolute);
                 bitmap.EndInit();
                 Bitmap = bitmap;
+
+                ResetOnlyLabeling();
             }
             else
             {
@@ -213,6 +254,8 @@ namespace SceneEnhancementLabeling.ViewModel
                 bitmap.UriSource = new Uri(file.Path, UriKind.Absolute);
                 bitmap.EndInit();
                 Bitmap = bitmap;
+
+                ResetOnlyLabeling();
             }
             else
             {
@@ -248,7 +291,6 @@ namespace SceneEnhancementLabeling.ViewModel
             }
         }
         
-        private int _itr;
         private Color _selectedColor;
 
         public Color SelectedColor
@@ -258,18 +300,30 @@ namespace SceneEnhancementLabeling.ViewModel
             {
                 _selectedColor = value;
                 RaisePropertyChanged();
-                int mod = _itr++%3;
-                if (mod == 0)
+
+                IsEditingColor = true;
+                var item = Category[CategoryIndex];
+                if (item.IsChecked0)
                 {
-                    Category[CategoryIndex].Color0 = new SolidColorBrush(value);
+                    item.Color0 = new SolidColorBrush(value);
                 }
-                else if (mod == 1)
+                else if (item.IsChecked1)
                 {
-                    Category[CategoryIndex].Color1 = new SolidColorBrush(value);
+                    if (item.Color0.Color == Colors.Transparent)
+                    {
+                        System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
+                        return;
+                    }
+                    item.Color1 = new SolidColorBrush(value);
                 }
-                else
+                else if (item.IsChecked2)
                 {
-                    Category[CategoryIndex].Color2 = new SolidColorBrush(value);
+                    if (item.Color0.Color == Colors.Transparent || item.Color1.Color == Colors.Transparent)
+                    {
+                        System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
+                        return;
+                    }
+                    item.Color2 = new SolidColorBrush(value);
                 }
             }
         }
@@ -279,7 +333,19 @@ namespace SceneEnhancementLabeling.ViewModel
         #region Component Labeling
         #endregion
 
-        #region Common
+        #region Output
+
+        private bool _isEditingColor;
+
+        public bool IsEditingColor
+        {
+            get { return _isEditingColor; }
+            set
+            {
+                _isEditingColor = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private RelayCommand _resetCommand;
 
@@ -287,6 +353,7 @@ namespace SceneEnhancementLabeling.ViewModel
 
         private void ResetAll()
         {
+            IsEditingColor = false;
             Bitmap = null;
             _images.Clear();
             _selectedIndex = -1;
@@ -295,6 +362,13 @@ namespace SceneEnhancementLabeling.ViewModel
             CanNext = false;
             Category = null;
             CategoryIndex = 0;
+            LoadDefaultCateogry();
+            OutputPath = null;
+        }
+
+        private void ResetOnlyLabeling()
+        {
+            LoadDefaultCateogry();
         }
 
         private RelayCommand _saveCommand;
@@ -312,17 +386,52 @@ namespace SceneEnhancementLabeling.ViewModel
             {
                 return;
             }
-            var dlg = new SaveFileDialog
+            if (string.IsNullOrEmpty(OutputPath))
             {
-                FileName = currentImageFile.FileName,
-                DefaultExt = ".txt",
-                Filter = @"Text documents (.txt)|*.txt"
-            };
-            var result = dlg.ShowDialog();
-            if (result == DialogResult.OK || result == DialogResult.Yes)
+                return;
+            }
+            //var dlg = new SaveFileDialog
+            //{
+            //    FileName = currentImageFile.FileName,
+            //    DefaultExt = ".txt",
+            //    Filter = @"Text documents (.txt)|*.txt"
+            //};
+            //var result = dlg.ShowDialog();
+            //if (result == DialogResult.OK || result == DialogResult.Yes)
+            //{
+            //    var content = GenerateContent();
+            //    File.WriteAllText(dlg.FileName, content);
+            //}
+
+            try
             {
                 var content = GenerateContent();
-                File.WriteAllText(dlg.FileName, content);
+                var buffer = Encoding.UTF8.GetBytes(content);
+                if (!Directory.Exists(OutputPath))
+                {
+                    Directory.CreateDirectory(OutputPath);
+                }
+                var fileName = Path.Combine(OutputPath, currentImageFile.FileName + ".txt");
+                if (!File.Exists(fileName))
+                {
+                    using (var fs = File.Create(fileName))
+                    {
+                        fs.Write(buffer, 0, buffer.Length);
+                    }
+                }
+                else
+                {
+                    using (var fs = File.OpenWrite(fileName))
+                    {
+                        fs.Write(buffer, 0, buffer.Length);
+                    }
+                }
+                IsEditingColor = false;
+                AutoClosingMessageBox.Show("Save successfully.", "Labeling", 2000);
+            }
+            catch (Exception)
+            {
+                AutoClosingMessageBox.Show("Save failed.", "Labeling", 2000);
             }
         }
 
