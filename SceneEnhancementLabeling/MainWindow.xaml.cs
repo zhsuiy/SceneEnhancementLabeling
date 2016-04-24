@@ -24,6 +24,7 @@ namespace SceneEnhancementLabeling
         public MainWindow()
         {
             InitializeComponent();
+            WindowStartupLocation = WindowStartupLocation.CenterScreen;
             Frame.NavigationService.Navigate(new Uri("View/LabelingPage.xaml", UriKind.Relative));
         }
 

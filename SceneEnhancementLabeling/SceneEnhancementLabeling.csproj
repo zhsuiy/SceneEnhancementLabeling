@@ -82,7 +82,11 @@
     </ApplicationDefinition>
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\ImageBehaviorMouseDownPointSampleToColor.cs" />
+    <Compile Include="Common\MessageBoxEx.cs" />
+    <Compile Include="Common\RadioButtonEx.cs" />
+    <Compile Include="Common\ScrollViewerEx.cs" />
     <Compile Include="Models\CategoryItem.cs" />
+    <Compile Include="Models\ComponentItem.cs" />
     <Compile Include="Models\ImageDetail.cs" />
     <Compile Include="ViewModel\ExtractColorViewModel.cs" />
     <Compile Include="ViewModel\LabelingViewModel.cs" />
@@ -134,6 +138,7 @@
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Include="category.json" />
+    <EmbeddedResource Include="component.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

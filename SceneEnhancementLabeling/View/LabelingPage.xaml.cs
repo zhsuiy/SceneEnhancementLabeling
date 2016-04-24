@@ -12,6 +12,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
+using SceneEnhancementLabeling.ViewModel;
 
 namespace SceneEnhancementLabeling.View
 {
@@ -23,6 +24,24 @@ namespace SceneEnhancementLabeling.View
         public LabelingPage()
         {
             InitializeComponent();
+        }
+        
+        private void MySaveCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var vm = DataContext as LabelingViewModel;
+            vm?.SaveCommand.Execute(null);
+        }
+
+        private void MyResetCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var vm = DataContext as LabelingViewModel;
+            vm?.ResetCommand.Execute(null);
+        }
+
+        private void MyOpenOutputCommand(object sender, ExecutedRoutedEventArgs e)
+        {
+            var vm = DataContext as LabelingViewModel;
+            vm?.OpenOutputCommand.Execute(null);
         }
     }
 }
