@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -25,9 +26,11 @@ namespace SceneEnhancementLabeling.ViewModel
     {
         #region Default
         private const string DefaultCategoryPath = "SceneEnhancementLabeling.category.json";
+        private const string DefaultComponentPath = "SceneEnhancementLabeling.component.json";
         public LabelingViewModel()
         {
             LoadDefaultCateogry();
+            LoadDefaultComponent();
         }
 
         private void LoadDefaultCateogry()
@@ -47,6 +50,36 @@ namespace SceneEnhancementLabeling.ViewModel
                         var list = JsonConvert.DeserializeObject<List<CategoryItem>>(content);
                         Category = new ObservableCollection<CategoryItem>(list);
                         CategoryIndex = 0;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+        }
+
+        private void LoadDefaultComponent()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (Stream stream = assembly.GetManifestResourceStream(DefaultComponentPath))
+            {
+                if (stream == null)
+                {
+                    return;
+                }
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    try
+                    {
+                        var content = reader.ReadToEnd();
+                        var list = JsonConvert.DeserializeObject<List<ComponentItem>>(content);
+                        foreach (var componentItem in list)
+                        {
+                            componentItem.Category = new List<CategoryItem>(Category);
+                        }
+                        Components = new ObservableCollection<ComponentItem>(list);
+                        ComponentIndex = 0;
                     }
                     catch (Exception)
                     {
@@ -203,7 +236,7 @@ namespace SceneEnhancementLabeling.ViewModel
 
         private void LoadNext()
         {
-            if (IsEditingColor)
+            if (IsEditingColor || IsEditingComponent)
             {
                 var result = System.Windows.Forms.MessageBox.Show(
                     @"You are labeling current image without save. Do you like to save before loading next ?",
@@ -216,6 +249,7 @@ namespace SceneEnhancementLabeling.ViewModel
                 else if (result == DialogResult.No)
                 {
                     IsEditingColor = false;
+                    IsEditingComponent = false;
                 }
                 else if (result == DialogResult.Cancel)
                 {
@@ -244,6 +278,27 @@ namespace SceneEnhancementLabeling.ViewModel
 
         private void LoadPrevious()
         {
+            if (IsEditingColor || IsEditingComponent)
+            {
+                var result = System.Windows.Forms.MessageBox.Show(
+                    @"You are labeling current image without save. Do you like to save before loading next ?",
+                    @"Warning",
+                    MessageBoxButtons.YesNoCancel);
+                if (result == DialogResult.Yes)
+                {
+                    SaveAll();
+                }
+                else if (result == DialogResult.No)
+                {
+                    IsEditingColor = false;
+                    IsEditingComponent = false;
+                }
+                else if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+            }
+
             CheckPreviousState();
             if (_images.Any() && _selectedIndex - 1 >= 0)
             {
@@ -298,6 +353,11 @@ namespace SceneEnhancementLabeling.ViewModel
             get { return _selectedColor; }
             set
             {
+                if (_isEditingComponent)
+                {
+                    return;
+                }
+
                 _selectedColor = value;
                 RaisePropertyChanged();
 
@@ -327,13 +387,60 @@ namespace SceneEnhancementLabeling.ViewModel
                 }
             }
         }
-
-        #endregion
+        
+        #endregion  
 
         #region Component Labeling
+        private ObservableCollection<ComponentItem> _components;
+
+        public ObservableCollection<ComponentItem> Components
+        {
+            get { return _components; }
+            set
+            {
+                _components = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private int _componentIndex;
+
+        public int ComponentIndex
+        {
+            get { return _componentIndex; }
+            set
+            {
+                _componentIndex = value;
+                RaisePropertyChanged();
+            }
+        }
         #endregion
 
         #region Output
+
+        private bool _isColorLabelStepEnabled = true;
+
+        public bool IsColorLabelStepEnabled
+        {
+            get { return _isColorLabelStepEnabled; }
+            set
+            {
+                _isColorLabelStepEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _isComponentLabelStepEnabled;
+
+        public bool IsComponentLabelStepEnabled
+        {
+            get { return _isComponentLabelStepEnabled; }
+            set
+            {
+                _isComponentLabelStepEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
 
         private bool _isEditingColor;
 
@@ -347,6 +454,48 @@ namespace SceneEnhancementLabeling.ViewModel
             }
         }
 
+        private bool _isEditingComponent;
+
+        public bool IsEditingComponent
+        {
+            get { return _isEditingComponent; }
+            set
+            {
+                _isEditingComponent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private RelayCommand _openOutputCommand;
+
+        public ICommand OpenOutputCommand => _openOutputCommand ?? (_openOutputCommand = new RelayCommand(OpenOutput));
+
+        private void OpenOutput()
+        {
+            if (string.IsNullOrEmpty(OutputPath))
+            {
+                return;
+            }
+            ProcessStartInfo startInformation = new ProcessStartInfo {FileName = OutputPath};
+            Process process = Process.Start(startInformation);
+            if (process != null)
+            {
+                process.EnableRaisingEvents = true;
+            }
+        }
+
+        private bool _isScrollTop;
+
+        public bool IsScrollToTop
+        {
+            get { return _isScrollTop; }
+            set
+            {
+                _isScrollTop = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private RelayCommand _resetCommand;
 
         public ICommand ResetCommand => _resetCommand ?? (_resetCommand = new RelayCommand(ResetAll));
@@ -354,6 +503,9 @@ namespace SceneEnhancementLabeling.ViewModel
         private void ResetAll()
         {
             IsEditingColor = false;
+            IsEditingComponent = false;
+            IsColorLabelStepEnabled = true;
+            IsComponentLabelStepEnabled = false;
             Bitmap = null;
             _images.Clear();
             _selectedIndex = -1;
@@ -363,12 +515,16 @@ namespace SceneEnhancementLabeling.ViewModel
             Category = null;
             CategoryIndex = 0;
             LoadDefaultCateogry();
+            LoadDefaultComponent();
+            IsScrollToTop = true;
             OutputPath = null;
         }
 
         private void ResetOnlyLabeling()
         {
             LoadDefaultCateogry();
+            LoadDefaultComponent();
+            IsScrollToTop = true;
         }
 
         private RelayCommand _saveCommand;
@@ -406,6 +562,10 @@ namespace SceneEnhancementLabeling.ViewModel
             try
             {
                 var content = GenerateContent();
+                if (string.IsNullOrEmpty(content))
+                {
+                    return;
+                }
                 var buffer = Encoding.UTF8.GetBytes(content);
                 if (!Directory.Exists(OutputPath))
                 {
@@ -421,12 +581,15 @@ namespace SceneEnhancementLabeling.ViewModel
                 }
                 else
                 {
-                    using (var fs = File.OpenWrite(fileName))
+                    using (var fs = File.Open(fileName, FileMode.Truncate, FileAccess.Write))
                     {
                         fs.Write(buffer, 0, buffer.Length);
                     }
                 }
                 IsEditingColor = false;
+                IsEditingComponent = false;
+                IsColorLabelStepEnabled = true;
+                IsComponentLabelStepEnabled = false;
                 AutoClosingMessageBox.Show("Save successfully.", "Labeling", 2000);
             }
             catch (Exception)
@@ -438,30 +601,140 @@ namespace SceneEnhancementLabeling.ViewModel
         private string GenerateContent()
         {
             var sb = new StringBuilder();
-            sb.AppendLine("Furniture Color");
-            foreach (var categoryItem in Category)
+            if (Category.Any(t =>
+                t.Color0.Color != Colors.Transparent || t.Color1.Color != Colors.Transparent ||
+                t.Color2.Color != Colors.Transparent))
             {
-                sb.AppendFormat("{0} = {1} {2} {3} {4} {5} {6} {7} {8} {9}", 
-                    categoryItem.Name,
-                    categoryItem.Color0.Color.R,
-                    categoryItem.Color0.Color.G,
-                    categoryItem.Color0.Color.B,
-                    categoryItem.Color1.Color.R,
-                    categoryItem.Color1.Color.G,
-                    categoryItem.Color1.Color.B,
-                    categoryItem.Color2.Color.R,
-                    categoryItem.Color2.Color.G,
-                    categoryItem.Color2.Color.B);
+                sb.AppendLine("Furniture Color");
+                foreach (var categoryItem in Category)
+                {
+                    if (categoryItem.Color0.Color == Colors.Transparent &&
+                        categoryItem.Color1.Color == Colors.Transparent &&
+                        categoryItem.Color2.Color == Colors.Transparent)
+                    {
+                        continue;
+                    }
+                    sb.AppendFormat("{0} = ", categoryItem.Name);
+                    if (categoryItem.Color0.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat("{0} {1} {2}",
+                            categoryItem.Color0.Color.R,
+                            categoryItem.Color0.Color.G,
+                            categoryItem.Color0.Color.B);
+                    }
+                    if (categoryItem.Color1.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat("{0} {1} {2}",
+                            categoryItem.Color1.Color.R,
+                            categoryItem.Color1.Color.G,
+                            categoryItem.Color1.Color.B);
+                    }
+                    if (categoryItem.Color2.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat("{0} {1} {2}",
+                            categoryItem.Color2.Color.R,
+                            categoryItem.Color2.Color.G,
+                            categoryItem.Color2.Color.B);
+                    }
+                    sb.AppendLine();
+                }
                 sb.AppendLine();
-            }
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine();
-            sb.AppendLine("Decorations");
+                sb.AppendLine();
+                sb.AppendLine();
 
+                if (Components.Any(t => t.SelectedCategoryIndex != -1))
+                {
+                    sb.AppendLine("Decorations");
+                    foreach (var componentItem in Components)
+                    {
+                        if (componentItem.SelectedCategoryIndex == -1 &&
+                            !componentItem.IsLeft &&
+                            !componentItem.IsRight &&
+                            !componentItem.IsFront &&
+                            !componentItem.IsBack &&
+                            !componentItem.IsCenter)
+                        {
+                            // not set
+                            continue;
+                        }
+
+                        if (componentItem.SelectedCategoryIndex == -1)
+                        {
+                            sb.AppendFormat("{0} = NotSet |", componentItem.Name);
+                        }
+                        else
+                        {
+                            sb.AppendFormat("{0} = {1} |", componentItem.Name,
+                                componentItem.Category[componentItem.SelectedCategoryIndex].Name);
+                        }
+
+                        if (!componentItem.IsLeft && !componentItem.IsRight && !componentItem.IsFront &&
+                            !componentItem.IsBack && !componentItem.IsCenter)
+                        {
+                            sb.Append(" NotSet");
+                            sb.AppendLine();
+                            continue;
+                        }
+
+                        sb.Append(" ");
+                        if (componentItem.IsLeft)
+                        {
+                            sb.Append("Left");
+                        }
+                        else if (componentItem.IsRight)
+                        {
+                            sb.Append("Right");
+                        }
+
+                        sb.Append(" ");
+                        if (componentItem.IsFront)
+                        {
+                            sb.Append("Front");
+                        }
+                        else if (componentItem.IsBack)
+                        {
+                            sb.Append("Back");
+                        }
+
+                        sb.Append(" ");
+                        if (componentItem.IsCenter)
+                        {
+                            sb.Append("Center");
+                        }
+                        sb.AppendLine();
+                    }
+                }
+            }
             return sb.ToString();
         }
 
+        private RelayCommand _nextStepCommand;
+
+        public ICommand NextStepCommand => _nextStepCommand ?? (_nextStepCommand = new RelayCommand(NextStep));
+
+        private void NextStep()
+        {
+            if (Bitmap == null)
+            {
+                return;
+            }
+            IsColorLabelStepEnabled = false;
+            IsComponentLabelStepEnabled = true;
+            IsEditingComponent = true;
+        }
+
+        private RelayCommand _previousStepCommand;
+        public ICommand PreviousStepCommand => _previousStepCommand ?? (_previousStepCommand = new RelayCommand(PreviousStep));
+
+        private void PreviousStep()
+        {
+            if (Bitmap == null)
+            {
+                return;
+            }
+            IsColorLabelStepEnabled = true;
+            IsComponentLabelStepEnabled = false;
+        }
         #endregion
     }
 }

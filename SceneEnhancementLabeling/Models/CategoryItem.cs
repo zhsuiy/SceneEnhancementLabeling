@@ -94,5 +94,18 @@ namespace SceneEnhancementLabeling.Models
                 RaisePropertyChanged();
             }
         }
+
+
+        private bool _isCurrentChecked;
+
+        public bool IsCurrentChecked
+        {
+            get { return _isCurrentChecked; }
+            set
+            {
+                _isCurrentChecked = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }
