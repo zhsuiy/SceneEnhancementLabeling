@@ -624,14 +624,14 @@ namespace SceneEnhancementLabeling.ViewModel
                     }
                     if (categoryItem.Color1.Color != Colors.Transparent)
                     {
-                        sb.AppendFormat("{0} {1} {2}",
+                        sb.AppendFormat(" {0} {1} {2}",
                             categoryItem.Color1.Color.R,
                             categoryItem.Color1.Color.G,
                             categoryItem.Color1.Color.B);
                     }
                     if (categoryItem.Color2.Color != Colors.Transparent)
                     {
-                        sb.AppendFormat("{0} {1} {2}",
+                        sb.AppendFormat(" {0} {1} {2}",
                             categoryItem.Color2.Color.R,
                             categoryItem.Color2.Color.G,
                             categoryItem.Color2.Color.B);
@@ -676,29 +676,35 @@ namespace SceneEnhancementLabeling.ViewModel
                             continue;
                         }
 
-                        sb.Append(" ");
-                        if (componentItem.IsLeft)
+                        if (componentItem.IsLeft || componentItem.IsRight)
                         {
-                            sb.Append("Left");
-                        }
-                        else if (componentItem.IsRight)
-                        {
-                            sb.Append("Right");
-                        }
-
-                        sb.Append(" ");
-                        if (componentItem.IsFront)
-                        {
-                            sb.Append("Front");
-                        }
-                        else if (componentItem.IsBack)
-                        {
-                            sb.Append("Back");
+                            sb.Append(" ");
+                            if (componentItem.IsLeft)
+                            {
+                                sb.Append("Left");
+                            }
+                            else if (componentItem.IsRight)
+                            {
+                                sb.Append("Right");
+                            }
                         }
 
-                        sb.Append(" ");
+                        if (componentItem.IsFront || componentItem.IsBack)
+                        {
+                            sb.Append(" ");
+                            if (componentItem.IsFront)
+                            {
+                                sb.Append("Front");
+                            }
+                            else if (componentItem.IsBack)
+                            {
+                                sb.Append("Back");
+                            }
+                        }
+
                         if (componentItem.IsCenter)
                         {
+                            sb.Append(" ");
                             sb.Append("Center");
                         }
                         sb.AppendLine();

@@ -19,6 +19,7 @@
                 </MenuItem>
                 <MenuItem Header="_Settings" Height="27">
                     <MenuItem Header="_Load Category" Command="{Binding LoadCategoryCommand}"/>
+                    <MenuItem Header="_Load Component" Command="{Binding LoadComponentCommand}"/>
                 </MenuItem>
             </Menu>
             <Frame x:Name="Frame"/>

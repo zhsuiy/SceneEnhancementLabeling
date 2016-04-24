@@ -47,5 +47,39 @@ namespace SceneEnhancementLabeling.ViewModel
                 }
             }
         }
+
+        private RelayCommand _loadComponentCommand;
+
+        public ICommand LoadComponentCommand => _loadComponentCommand ?? (_loadComponentCommand = new RelayCommand(LoadComponent));
+
+        private void LoadComponent()
+        {
+            var dialog = new OpenFileDialog();
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                using (var stream = dialog.OpenFile())
+                {
+                    using (var reader = new StreamReader(stream))
+                    {
+                        try
+                        {
+                            var content = reader.ReadToEnd();
+                            var list = JsonConvert.DeserializeObject<List<ComponentItem>>(content);
+
+                            var labeling = ServiceLocator.Current.GetInstance<LabelingViewModel>();
+                            if (labeling != null)
+                            {
+                                labeling.Components = new ObservableCollection<ComponentItem>(list);
+                                labeling.ComponentIndex = 0;
+                            }
+                        }
+                        catch (Exception)
+                        {
+                            // ignored
+                        }
+                    }
+                }
+            }
+        }
     }
 }
