@@ -40,7 +40,21 @@
                 </Setter.Value>
             </Setter>
         </Style>
+
+        <RoutedUICommand x:Key="MySaveCommand" Text="Save" />
+        <RoutedUICommand x:Key="MyResetCommand" Text="Reset" />
+        <RoutedUICommand x:Key="MyOpenOuputCommand" Text="Open Output" />
     </Page.Resources>
+    <Page.CommandBindings>
+        <CommandBinding Command="{StaticResource MySaveCommand}" Executed="MySaveCommand" />
+        <CommandBinding Command="{StaticResource MyResetCommand}" Executed="MyResetCommand" />
+        <CommandBinding Command="{StaticResource MyOpenOuputCommand}" Executed="MyOpenOutputCommand" />
+    </Page.CommandBindings>
+    <Page.InputBindings>
+        <KeyBinding Key="S" Modifiers="Ctrl" Command="{StaticResource MySaveCommand}" />
+        <KeyBinding Key="Z" Modifiers="Ctrl+Shift" Command="{StaticResource MyResetCommand}" />
+        <KeyBinding Key="O" Modifiers="Ctrl+Alt" Command="{StaticResource MyOpenOuputCommand}" />
+    </Page.InputBindings>
 
     <Grid>
         <Grid.RowDefinitions>
@@ -227,8 +241,8 @@
                         </Grid>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom">
-                        <Button Content="Reset" Width="100" Height="50" Margin="12" Command="{Binding ResetCommand}"/>
-                        <Button Content="Save" Width="100" Height="50" Margin="12" Command="{Binding SaveCommand}"/>
+                        <Button Content="Reset" Width="100" Height="50" Margin="12" Command="{StaticResource MyResetCommand}"/>
+                        <Button Content="Save" Width="100" Height="50" Margin="12" Command="{StaticResource MySaveCommand}"/>
                         <Button Content="Open Output" Width="100" Height="50" Margin="12" Command="{Binding OpenOutputCommand}"/>
                     </StackPanel>
                 </Grid>
