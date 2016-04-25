@@ -362,10 +362,39 @@ namespace SceneEnhancementLabeling.ViewModel
                 RaisePropertyChanged();
 
                 IsEditingColor = true;
+
+                StringBuilder sb = new StringBuilder();
+                if (string.IsNullOrEmpty(OutputContent) || !OutputContent.StartsWith("Furniture Color"))
+                {
+                    sb.AppendLine("Furniture Color");
+                }
+
                 var item = Category[CategoryIndex];
+                var head = item.Name + " =";
+                var breakLine = "\r\n";
+                int startIndex = -1;
+                int lineIndex = -1;
+                if (string.IsNullOrEmpty(OutputContent) || !OutputContent.Contains(head))
+                {
+                    sb.AppendFormat("{0} =", item.Name);
+                }
+                else
+                {
+                    startIndex = OutputContent.IndexOf(head, StringComparison.Ordinal) + head.Length;
+                    lineIndex = OutputContent.IndexOf(breakLine, startIndex, StringComparison.Ordinal) + breakLine.Length;
+                }
                 if (item.IsChecked0)
                 {
                     item.Color0 = new SolidColorBrush(value);
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
+                    if (item.Color1.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
+                    }
+                    if (item.Color2.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
+                    }
                 }
                 else if (item.IsChecked1)
                 {
@@ -375,6 +404,15 @@ namespace SceneEnhancementLabeling.ViewModel
                         return;
                     }
                     item.Color1 = new SolidColorBrush(value);
+                    if (item.Color0.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
+                    }
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
+                    if (item.Color2.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
+                    }
                 }
                 else if (item.IsChecked2)
                 {
@@ -384,7 +422,22 @@ namespace SceneEnhancementLabeling.ViewModel
                         return;
                     }
                     item.Color2 = new SolidColorBrush(value);
+                    if (item.Color0.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
+                    }
+                    if (item.Color1.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
+                    }
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
                 }
+                if (lineIndex >= startIndex && lineIndex > -1 && startIndex > -1)
+                {
+                    OutputContent = OutputContent.Remove(startIndex, lineIndex - startIndex);
+                }
+                sb.AppendLine();
+                OutputContent += sb.ToString();
             }
         }
         
@@ -742,5 +795,29 @@ namespace SceneEnhancementLabeling.ViewModel
             IsComponentLabelStepEnabled = false;
         }
         #endregion
+
+        private bool _isPopOpen;
+
+        public bool IsPopOpen
+        {
+            get { return _isPopOpen; }
+            set
+            {
+                _isPopOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string _outputContent;
+
+        public string OutputContent
+        {
+            get { return _outputContent; }
+            set
+            {
+                _outputContent = value;
+                RaisePropertyChanged();
+            }
+        }
     }
 }

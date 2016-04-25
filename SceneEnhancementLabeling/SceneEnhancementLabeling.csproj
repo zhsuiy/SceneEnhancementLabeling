@@ -82,6 +82,7 @@
     </ApplicationDefinition>
     <Compile Include="Common\BooleanToVisibilityConverter.cs" />
     <Compile Include="Common\ImageBehaviorMouseDownPointSampleToColor.cs" />
+    <Compile Include="Common\ImageBehaviorMouseDownPointToPopup.cs" />
     <Compile Include="Common\MessageBoxEx.cs" />
     <Compile Include="Common\RadioButtonEx.cs" />
     <Compile Include="Common\ScrollViewerEx.cs" />
