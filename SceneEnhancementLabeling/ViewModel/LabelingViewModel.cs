@@ -353,7 +353,7 @@ namespace SceneEnhancementLabeling.ViewModel
             get { return _selectedColor; }
             set
             {
-                if (_isEditingComponent)
+                if (!IsColorLabelStepEnabled)
                 {
                     return;
                 }
