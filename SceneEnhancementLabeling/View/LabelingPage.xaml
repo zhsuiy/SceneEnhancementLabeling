@@ -61,7 +61,17 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
-        <TextBlock Text="Labeling" FontWeight="Bold" FontSize="30" Margin="12"/>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="2*"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="Labeling" FontWeight="Bold" FontSize="30" Margin="12"/>
+            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="36,0">
+                <Button Content="Previous Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabeld}"/>
+                <Button Content="Next Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled}"/>
+            </StackPanel>
+        </Grid>
         <Grid Grid.Row="1" Margin="12,0">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="2*"/>
@@ -96,7 +106,6 @@
                                 <TextBlock Text="Color Labeling" FontSize="20" FontWeight="Bold"/>
                                 <TextBlock Text="*" Foreground="Red" FontSize="20" FontWeight="Bold" Visibility="{Binding IsEditingColor, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="12,0"/>
                             </StackPanel>
-                            <Button Content="Next Step" Margin="12,0,0,0" Width="120" HorizontalAlignment="Right" Command="{Binding NextStepCommand}"/>
                         </Grid>
                         <TabControl ItemsSource="{Binding Category}" SelectedIndex="{Binding CategoryIndex, Mode=TwoWay}" Margin="0,6">
                             <TabControl.ItemTemplate>
@@ -147,7 +156,7 @@
                                 <RowDefinition/>
                             </Grid.RowDefinitions>
                             <TextBlock Text="Location"/>
-                            <TextBox Text="{Binding OutputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,6" Grid.Row="1" Height="27"/>
+                            <TextBox Text="{Binding OutputPath, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}" VerticalContentAlignment="Center" Margin="0,6" Grid.Row="1" Height="27" AcceptsReturn="True"/>
                         </Grid>
                     </StackPanel>
                     <StackPanel Orientation="Horizontal" Grid.Row="3" VerticalAlignment="Bottom">
@@ -166,9 +175,8 @@
                             <TextBlock Text="Component Labeling" FontSize="20" FontWeight="Bold"/>
                             <TextBlock Text="*" Foreground="Red" FontSize="20" FontWeight="Bold" Visibility="{Binding IsEditingComponent, Converter={StaticResource BooleanToVisibilityConverter}}" Margin="12,0"/>
                         </StackPanel>
-                        <Button Content="Previous Step" Margin="12,0,0,0" Width="120" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}"/>
                     </Grid>
-                    <TabControl ItemsSource="{Binding Components}" SelectedIndex="{Binding ComponentIndex, Mode=TwoWay}" TabStripPlacement="Left" Margin="0,6" MaxHeight="720">
+                    <TabControl ItemsSource="{Binding ComponentsCollection}" SelectedIndex="{Binding CollectionIndex, Mode=TwoWay}" TabStripPlacement="Left" Margin="0,6" MaxHeight="720">
                         <TabControl.Template>
                             <ControlTemplate TargetType="{x:Type TabControl}">
                                 <Grid>
@@ -192,30 +200,43 @@
                                         <ColumnDefinition Width="Auto"/>
                                         <ColumnDefinition/>
                                     </Grid.ColumnDefinitions>
-                                    <TextBlock Text="√" FontSize="20" FontWeight="Bold" Foreground="Red" Margin="0,0,3,0" Visibility="{Binding IsDirty, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center"/>
+                                    <!--<TextBlock Text="√" FontSize="20" FontWeight="Bold" Foreground="Red" Margin="0,0,3,0" Visibility="{Binding IsDirty, Converter={StaticResource BooleanToVisibilityConverter}}" VerticalAlignment="Center"/>-->
                                     <Grid Height="30" Grid.Column="1">
-                                        <TextBlock Text="{Binding Name}" VerticalAlignment="Top" HorizontalAlignment="Center"/>
-                                        <TextBlock Text="{Binding NameCn}" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>
+                                        <TextBlock Text="{Binding Key}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                                        <!--<TextBlock Text="{Binding NameCn}" VerticalAlignment="Bottom" HorizontalAlignment="Center"/>-->
                                     </Grid>
                                 </Grid>
                             </DataTemplate>
                         </TabControl.ItemTemplate>
                         <TabControl.ContentTemplate>
-                            <DataTemplate DataType="{x:Type models:ComponentItem}">
+                            <DataTemplate DataType="{x:Type models:GroupedComponents}">
                                 <Grid Margin="12,6">
                                     <Grid.RowDefinitions>
                                         <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="200"/>
                                         <RowDefinition Height="Auto"/>
-                                        <RowDefinition Height="150"/>
+                                        <RowDefinition Height="200"/>
                                         <RowDefinition Height="Auto"/>
                                         <RowDefinition Height="Auto"/>
                                     </Grid.RowDefinitions>
-                                    <TextBlock Foreground="Red">
-                                            <Run Text="{Binding Name}" FontWeight="Bold"/>
-                                            <Run Text="{Binding NameCn}" FontWeight="Bold"/>
-                                    </TextBlock>
-                                    <TextBlock Grid.Row="1" Text="A. Select a category below on which this component place" TextWrapping="Wrap" FontWeight="Bold"/>
-                                    <ListView ItemsSource="{Binding Category}" SelectedIndex="{Binding SelectedCategoryIndex, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,6" Grid.Row="2">
+                                    <TextBlock Text="A. Select a component type for your selected object." TextWrapping="Wrap" FontWeight="Bold"/>
+                                    <ListView ItemsSource="{Binding Data}" SelectedIndex="{Binding SelectedComponentIndex, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,6" Grid.Row="1">
+                                        <ListView.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel Orientation="Horizontal" IsItemsHost="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
+                                            </ItemsPanelTemplate>
+                                        </ListView.ItemsPanel>
+                                        <ListView.ItemTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Margin="6">
+                                                    <TextBlock Text="{Binding Name}" HorizontalAlignment="Center"/>
+                                                    <TextBlock Text="{Binding NameCn}" HorizontalAlignment="Center"/>
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </ListView.ItemTemplate>
+                                    </ListView>
+                                    <TextBlock Grid.Row="2" Text="B. Select a category type where the component should be place to." TextWrapping="Wrap" FontWeight="Bold"/>
+                                    <ListView ItemsSource="{Binding Category}" SelectedIndex="{Binding SelectedCategoryIndex, Mode=TwoWay}" ScrollViewer.HorizontalScrollBarVisibility="Disabled" ScrollViewer.VerticalScrollBarVisibility="Auto" Margin="0,6" Grid.Row="3">
                                         <ListView.ItemsPanel>
                                             <ItemsPanelTemplate>
                                                 <WrapPanel Orientation="Horizontal" IsItemsHost="True" ScrollViewer.HorizontalScrollBarVisibility="Disabled"/>
@@ -227,8 +248,8 @@
                                             </DataTemplate>
                                         </ListView.ItemTemplate>
                                     </ListView>
-                                    <TextBlock Grid.Row="3" Text="B. Select directions in what this component is. (You can only select two of three)" TextWrapping="Wrap" FontWeight="Bold"/>
-                                    <StackPanel Grid.Row="4">
+                                    <TextBlock Grid.Row="4" Text="C. Select directions in what this component is. (You can only select two of three)" TextWrapping="Wrap" FontWeight="Bold"/>
+                                    <StackPanel Grid.Row="5">
                                         <StackPanel Orientation="Horizontal" Margin="0,6">
                                             <TextBlock Text="Left/Right:" Margin="0,0,6,0" VerticalAlignment="Center"/>
                                             <ListBox Style="{StaticResource RadioButtonListBoxStyle}" SelectionMode="Single">
@@ -249,11 +270,13 @@
                                                 <ListBoxItem Content="Center" IsSelected="{Binding IsCenter, Mode=TwoWay}"/>
                                             </ListBox>
                                         </StackPanel>
+                                        <TextBlock Foreground="Red" Text="{Binding ErrorMessage, Mode=TwoWay}" Margin="0,6"/>
                                     </StackPanel>
                                 </Grid>
                             </DataTemplate>
                         </TabControl.ContentTemplate>
                     </TabControl>
+                    <Button Content="OK" Command="{Binding OkCommand}" Width="100" Height="30" HorizontalAlignment="Right" Margin="0,12"/>
                 </StackPanel>
             </Border>
         </Popup>

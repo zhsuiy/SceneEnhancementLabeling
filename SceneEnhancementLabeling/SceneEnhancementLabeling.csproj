@@ -88,6 +88,7 @@
     <Compile Include="Common\ScrollViewerEx.cs" />
     <Compile Include="Models\CategoryItem.cs" />
     <Compile Include="Models\ComponentItem.cs" />
+    <Compile Include="Models\GroupedComponents.cs" />
     <Compile Include="Models\ImageDetail.cs" />
     <Compile Include="ViewModel\ExtractColorViewModel.cs" />
     <Compile Include="ViewModel\LabelingViewModel.cs" />
@@ -140,6 +141,7 @@
     </EmbeddedResource>
     <EmbeddedResource Include="category.json" />
     <EmbeddedResource Include="component.json" />
+    <EmbeddedResource Include="grouped_components.json" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
