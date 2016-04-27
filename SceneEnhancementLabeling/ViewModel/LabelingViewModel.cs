@@ -27,10 +27,12 @@ namespace SceneEnhancementLabeling.ViewModel
         #region Default
         private const string DefaultCategoryPath = "SceneEnhancementLabeling.category.json";
         private const string DefaultComponentPath = "SceneEnhancementLabeling.component.json";
+        private const string DefaultGroupedComponentPath = "SceneEnhancementLabeling.grouped_components.json";
         public LabelingViewModel()
         {
             LoadDefaultCateogry();
-            LoadDefaultComponent();
+            //LoadDefaultComponent();
+            LoadDefaultGroupedCompoenent();
         }
 
         private void LoadDefaultCateogry()
@@ -80,6 +82,35 @@ namespace SceneEnhancementLabeling.ViewModel
                         }
                         Components = new ObservableCollection<ComponentItem>(list);
                         ComponentIndex = 0;
+                    }
+                    catch (Exception)
+                    {
+                        // ignored
+                    }
+                }
+            }
+        }
+
+        private void LoadDefaultGroupedCompoenent()
+        {
+            var assembly = Assembly.GetExecutingAssembly();
+            using (Stream stream = assembly.GetManifestResourceStream(DefaultGroupedComponentPath))
+            {
+                if (stream == null)
+                {
+                    return;
+                }
+                using (StreamReader reader = new StreamReader(stream))
+                {
+                    try
+                    {
+                        var content = reader.ReadToEnd();
+                        var collection = JsonConvert.DeserializeObject<GroupedComponentsCollection>(content);
+                        foreach (var group in collection)
+                        {
+                            group.Category = new List<CategoryItem>(Category);
+                        }
+                        ComponentsCollection = collection;
                     }
                     catch (Exception)
                     {
@@ -166,8 +197,8 @@ namespace SceneEnhancementLabeling.ViewModel
                     var dialog = new FolderBrowserDialog();
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        IsBrowseEnabled = false;
                         var path = dialog.SelectedPath;
+                        IsBrowseEnabled = false;
 
                         OutputPath = path + "\\Output";
 
@@ -345,7 +376,7 @@ namespace SceneEnhancementLabeling.ViewModel
                 RaisePropertyChanged();
             }
         }
-        
+
         private Color _selectedColor;
 
         public Color SelectedColor
@@ -353,7 +384,7 @@ namespace SceneEnhancementLabeling.ViewModel
             get { return _selectedColor; }
             set
             {
-                if (_isEditingComponent)
+                if (!IsColorLabelStepEnabled)
                 {
                     return;
                 }
@@ -362,10 +393,39 @@ namespace SceneEnhancementLabeling.ViewModel
                 RaisePropertyChanged();
 
                 IsEditingColor = true;
+
+                StringBuilder sb = new StringBuilder();
+                if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.StartsWith("Furniture Color"))
+                {
+                    sb.AppendLine("Furniture Color");
+                }
+
                 var item = Category[CategoryIndex];
+                var head = item.Name + " =";
+                var breakLine = "\r\n";
+                int startIndex = -1;
+                int lineIndex = -1;
+                if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.Contains(head))
+                {
+                    sb.AppendFormat("{0} =", item.Name);
+                }
+                else
+                {
+                    startIndex = ColorLabelingOutput.IndexOf(head, StringComparison.Ordinal) + head.Length;
+                    lineIndex = ColorLabelingOutput.IndexOf(breakLine, startIndex, StringComparison.Ordinal) + breakLine.Length;
+                }
                 if (item.IsChecked0)
                 {
                     item.Color0 = new SolidColorBrush(value);
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
+                    if (item.Color1.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
+                    }
+                    if (item.Color2.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
+                    }
                 }
                 else if (item.IsChecked1)
                 {
@@ -375,6 +435,15 @@ namespace SceneEnhancementLabeling.ViewModel
                         return;
                     }
                     item.Color1 = new SolidColorBrush(value);
+                    if (item.Color0.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
+                    }
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
+                    if (item.Color2.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
+                    }
                 }
                 else if (item.IsChecked2)
                 {
@@ -384,11 +453,40 @@ namespace SceneEnhancementLabeling.ViewModel
                         return;
                     }
                     item.Color2 = new SolidColorBrush(value);
+                    if (item.Color0.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
+                    }
+                    if (item.Color1.Color != Colors.Transparent)
+                    {
+                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
+                    }
+                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
+                }
+                if (lineIndex >= startIndex && lineIndex > -1 && startIndex > -1)
+                {
+                    ColorLabelingOutput = ColorLabelingOutput.Remove(startIndex, lineIndex - startIndex);
+                }
+                sb.AppendLine();
+                ColorLabelingOutput += sb.ToString();
+
+                sb.Clear();
+                sb.AppendLine();
+                sb.AppendLine();
+                sb.AppendLine();
+
+                if (!string.IsNullOrEmpty(ComponentLabelingOutput))
+                {
+                    OutputContent = ColorLabelingOutput + sb.ToString() + ComponentLabelingOutput;
+                }
+                else
+                {
+                    OutputContent = ColorLabelingOutput;
                 }
             }
         }
-        
-        #endregion  
+
+        #endregion
 
         #region Component Labeling
         private ObservableCollection<ComponentItem> _components;
@@ -476,7 +574,7 @@ namespace SceneEnhancementLabeling.ViewModel
             {
                 return;
             }
-            ProcessStartInfo startInformation = new ProcessStartInfo {FileName = OutputPath};
+            ProcessStartInfo startInformation = new ProcessStartInfo { FileName = OutputPath };
             Process process = Process.Start(startInformation);
             if (process != null)
             {
@@ -506,6 +604,8 @@ namespace SceneEnhancementLabeling.ViewModel
             IsEditingComponent = false;
             IsColorLabelStepEnabled = true;
             IsComponentLabelStepEnabled = false;
+            IsNextStepEnabled = true;
+            IsPreviousStepEnabeld = false;
             Bitmap = null;
             _images.Clear();
             _selectedIndex = -1;
@@ -518,6 +618,9 @@ namespace SceneEnhancementLabeling.ViewModel
             LoadDefaultComponent();
             IsScrollToTop = true;
             OutputPath = null;
+            ColorLabelingOutput = null;
+            ComponentLabelingOutput = null;
+            OutputContent = null;
         }
 
         private void ResetOnlyLabeling()
@@ -525,6 +628,13 @@ namespace SceneEnhancementLabeling.ViewModel
             LoadDefaultCateogry();
             LoadDefaultComponent();
             IsScrollToTop = true;
+            IsNextStepEnabled = true;
+            IsPreviousStepEnabeld = false;
+            IsColorLabelStepEnabled = true;
+            IsComponentLabelStepEnabled = false;
+            OutputContent = null;
+            ColorLabelingOutput = null;
+            ComponentLabelingOutput = null;
         }
 
         private RelayCommand _saveCommand;
@@ -561,12 +671,11 @@ namespace SceneEnhancementLabeling.ViewModel
 
             try
             {
-                var content = GenerateContent();
-                if (string.IsNullOrEmpty(content))
+                if (string.IsNullOrEmpty(OutputContent))
                 {
                     return;
                 }
-                var buffer = Encoding.UTF8.GetBytes(content);
+                var buffer = Encoding.UTF8.GetBytes(OutputContent);
                 if (!Directory.Exists(OutputPath))
                 {
                     Directory.CreateDirectory(OutputPath);
@@ -714,6 +823,30 @@ namespace SceneEnhancementLabeling.ViewModel
             return sb.ToString();
         }
 
+        private bool _isNextStepEnabled = true;
+
+        public bool IsNextStepEnabled
+        {
+            get { return _isNextStepEnabled; }
+            set
+            {
+                _isNextStepEnabled = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private bool _isPreviousStepEnabeld;
+
+        public bool IsPreviousStepEnabeld
+        {
+            get { return _isPreviousStepEnabeld; }
+            set
+            {
+                _isPreviousStepEnabeld = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private RelayCommand _nextStepCommand;
 
         public ICommand NextStepCommand => _nextStepCommand ?? (_nextStepCommand = new RelayCommand(NextStep));
@@ -727,6 +860,16 @@ namespace SceneEnhancementLabeling.ViewModel
             IsColorLabelStepEnabled = false;
             IsComponentLabelStepEnabled = true;
             IsEditingComponent = true;
+            IsNextStepEnabled = false;
+            IsPreviousStepEnabeld = true;
+            if (string.IsNullOrEmpty(ComponentLabelingOutput))
+            {
+                ComponentLabelingOutput = "Decorations\r\n";
+            }
+            else if (!ComponentLabelingOutput.StartsWith("Decorations"))
+            {
+                ComponentLabelingOutput = ComponentLabelingOutput.Insert(0, "Decorations\r\n");
+            }
         }
 
         private RelayCommand _previousStepCommand;
@@ -740,7 +883,171 @@ namespace SceneEnhancementLabeling.ViewModel
             }
             IsColorLabelStepEnabled = true;
             IsComponentLabelStepEnabled = false;
+            IsPopOpen = false;
+            IsNextStepEnabled = true;
+            IsPreviousStepEnabeld = false;
         }
         #endregion
+
+        private bool _isPopOpen;
+
+        public bool IsPopOpen
+        {
+            get { return _isPopOpen; }
+            set
+            {
+                _isPopOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private string _outputContent;
+
+        public string OutputContent
+        {
+            get { return _outputContent; }
+            set
+            {
+                _outputContent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public string ColorLabelingOutput { get; set; }
+        public string ComponentLabelingOutput { get; set; }
+
+        private GroupedComponentsCollection _componentsCollection;
+
+        public GroupedComponentsCollection ComponentsCollection
+        {
+            get { return _componentsCollection; }
+            set
+            {
+                _componentsCollection = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private int _collectionIndex;
+
+        public int CollectionIndex
+        {
+            get { return _collectionIndex; }
+            set
+            {
+                _collectionIndex = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private RelayCommand _okCommand;
+        public ICommand OkCommand => _okCommand ?? (_okCommand = new RelayCommand(DoOk));
+
+        private void DoOk()
+        {
+            StringBuilder sb = new StringBuilder();
+            if (ComponentsCollection.Any())
+            {
+                var group = ComponentsCollection[CollectionIndex];
+                if (group.SelectedComponentIndex == -1 &&
+                    group.SelectedCategoryIndex == -1 &&
+                    !group.IsLeft &&
+                    !group.IsRight &&
+                    !group.IsFront &&
+                    !group.IsBack &&
+                    !group.IsCenter)
+                {
+                    // not set
+                    return;
+                }
+                var component = group.Data[group.SelectedComponentIndex];
+                if (group.SelectedCategoryIndex == -1)
+                {
+                    sb.AppendFormat("{0} = NotSet |", component.Name);
+                }
+                else
+                {
+                    var category = group.Category[group.SelectedCategoryIndex];
+                    sb.AppendFormat("{0} = {1} |", component.Name, category.Name);
+                }
+
+                if (!group.IsLeft && !group.IsRight && !group.IsFront && !group.IsBack && !group.IsCenter)
+                {
+                    sb.Append(" NotSet");
+                    sb.AppendLine();
+                }
+                else
+                {
+                    if (group.IsLeft || group.IsRight)
+                    {
+                        sb.Append(" ");
+                        if (group.IsLeft)
+                        {
+                            sb.Append("Left");
+                        }
+                        else if (group.IsRight)
+                        {
+                            sb.Append("Right");
+                        }
+                    }
+
+                    if (group.IsFront || group.IsBack)
+                    {
+                        sb.Append(" ");
+                        if (group.IsFront)
+                        {
+                            sb.Append("Front");
+                        }
+                        else if (group.IsBack)
+                        {
+                            sb.Append("Back");
+                        }
+                    }
+
+                    if (group.IsCenter)
+                    {
+                        sb.Append(" ");
+                        sb.Append("Center");
+                    }
+                    sb.AppendLine();
+                }
+
+                ComponentLabelingOutput += sb.ToString();
+
+                sb.Clear();
+                sb.AppendLine();
+                sb.AppendLine();
+                sb.AppendLine();
+
+                if (!string.IsNullOrEmpty(ColorLabelingOutput))
+                {
+                    OutputContent = ColorLabelingOutput + sb + ComponentLabelingOutput;
+                }
+                else
+                {
+                    OutputContent = ComponentLabelingOutput;
+                }
+
+                ResetPopup();
+                IsPopOpen = false;
+            }
+        }
+
+        private void ResetPopup()
+        {
+            CollectionIndex = 0;
+            foreach (var group in ComponentsCollection)
+            {
+                group.SelectedCategoryIndex = -1;
+                group.SelectedComponentIndex = -1;
+                group.ErrorMessage = "";
+                group.IsLeft = false;
+                group.IsRight = false;
+                group.IsFront = false;
+                group.IsBack = false;
+                group.IsCenter = false;
+                group.IsDirty = false;
+            }
+        }
     }
 }

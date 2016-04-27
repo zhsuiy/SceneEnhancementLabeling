@@ -64,13 +64,17 @@ namespace SceneEnhancementLabeling.ViewModel
                         try
                         {
                             var content = reader.ReadToEnd();
-                            var list = JsonConvert.DeserializeObject<List<ComponentItem>>(content);
+
+                            var collection = JsonConvert.DeserializeObject<GroupedComponentsCollection>(content);
 
                             var labeling = ServiceLocator.Current.GetInstance<LabelingViewModel>();
                             if (labeling != null)
                             {
-                                labeling.Components = new ObservableCollection<ComponentItem>(list);
-                                labeling.ComponentIndex = 0;
+                                labeling.ComponentsCollection = collection;
+                                foreach (var group in collection)
+                                {
+                                    group.Category = new List<CategoryItem>(labeling.Category);
+                                }
                             }
                         }
                         catch (Exception)
