@@ -7,6 +7,7 @@
       xmlns:common="clr-namespace:SceneEnhancementLabeling.Common"
       xmlns:i="http://schemas.microsoft.com/expression/2010/interactivity"
       xmlns:models="clr-namespace:SceneEnhancementLabeling.Models"
+      xmlns:xctk="http://schemas.xceed.com/wpf/xaml/toolkit"
       mc:Ignorable="d" 
       d:DesignHeight="300" d:DesignWidth="300"
       Title="LabelingPage"
@@ -44,6 +45,7 @@
         <RoutedUICommand x:Key="MySaveCommand" Text="Save" />
         <RoutedUICommand x:Key="MyResetCommand" Text="Reset" />
         <RoutedUICommand x:Key="MyOpenOuputCommand" Text="Open Output" />
+        
     </Page.Resources>
     <Page.CommandBindings>
         <CommandBinding Command="{StaticResource MySaveCommand}" Executed="MySaveCommand" />
@@ -55,7 +57,7 @@
         <KeyBinding Key="Z" Modifiers="Ctrl+Shift" Command="{StaticResource MyResetCommand}" />
         <KeyBinding Key="O" Modifiers="Ctrl+Alt" Command="{StaticResource MyOpenOuputCommand}" />
     </Page.InputBindings>
-
+    
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -67,9 +69,27 @@
                 <ColumnDefinition Width="*"/>
             </Grid.ColumnDefinitions>
             <TextBlock Text="Labeling" FontWeight="Bold" FontSize="30" Margin="12"/>
-            <StackPanel Grid.Column="0" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="36,0">
-                <Button Content="Previous Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabeld}"/>
-                <Button Content="Next Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled}"/>
+            <ListView Grid.Column="0" Grid.ColumnSpan="2" Margin="150,6,300,6" ItemsSource="{Binding PreferenceColors}" VerticalContentAlignment="Center">
+                <ListView.Resources>
+                    <Style TargetType="{x:Type ScrollBar}">
+                        <Setter Property="MinHeight" Value="10" />
+                        <Setter Property="Height" Value="10" />
+                    </Style>
+                </ListView.Resources>
+                <ListView.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>
+                    </ItemsPanelTemplate>
+                </ListView.ItemsPanel>
+                <ListView.ItemTemplate>
+                    <DataTemplate DataType="SolidColorBrush">
+                        <Rectangle Fill="{Binding}" Stroke="Black" StrokeThickness="2" Width="36" Height="36" PreviewMouseLeftButtonUp="PreferenceColor_OnPreviewMouseLeftButtonUp"/>
+                    </DataTemplate>
+                </ListView.ItemTemplate>
+            </ListView>
+            <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="36,0">
+                <Button Content="Previous Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabeld}" Click="PreviousStepBtn_OnClick"/>
+                <Button Content="Next Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled}" Click="NextStepBtn_OnClick"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="12,0">
@@ -81,7 +101,7 @@
                 <Button Content="Browse..." Width="100" Height="30" Command="{Binding OpenFolderCommand}" Visibility="{Binding IsBrowseEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <Grid Margin="12">
                     <Grid>
-                        <Image Source="{Binding Bitmap}" Stretch="Uniform">
+                        <Image x:Name="Image" Source="{Binding Bitmap}" Stretch="Uniform">
                             <i:Interaction.Behaviors>
                                 <common:ImageBehaviorMouseDownPointSampleToColor SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
                                 <common:ImageBehaviorMouseDownPointToPopup IsPopupOpen="{Binding IsPopOpen, Mode=TwoWay}" IsEnabled="{Binding IsComponentLabelStepEnabled, Mode=TwoWay}"/>
@@ -121,19 +141,19 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                         </Grid.RowDefinitions>
-                                        <common:RadioButtonEx IsCheckedReal="{Binding IsChecked0}">
+                                        <common:RadioButtonEx IsCheckedReal="{Binding IsChecked0}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="0">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color0, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color0, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
                                             </StackPanel>
                                         </common:RadioButtonEx>
-                                        <common:RadioButtonEx Grid.Row="1" IsCheckedReal="{Binding IsChecked1}">
+                                        <common:RadioButtonEx Grid.Row="1" IsCheckedReal="{Binding IsChecked1}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="1">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color1, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color1, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
                                             </StackPanel>
                                         </common:RadioButtonEx>
-                                        <common:RadioButtonEx Grid.Row="2" IsCheckedReal="{Binding IsChecked2}">
+                                        <common:RadioButtonEx Grid.Row="2" IsCheckedReal="{Binding IsChecked2}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="2">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color2, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color2, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
@@ -280,6 +300,8 @@
                 </StackPanel>
             </Border>
         </Popup>
-    </Grid>
+        </Grid>
 </Page>
+
+
 
