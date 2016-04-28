@@ -52,7 +52,7 @@ namespace SceneEnhancementLabeling.ViewModel
 
         private readonly List<ImageDetail> _images = new List<ImageDetail>();
         private int _selectedIndex = -1;
-
+        private string _path;
         private RelayCommand<ExecutedRoutedEventArgs> _openFileCommand;
 
         public ICommand OpenFolderCommand
@@ -64,10 +64,10 @@ namespace SceneEnhancementLabeling.ViewModel
                     var dialog = new FolderBrowserDialog();
                     if (dialog.ShowDialog() == DialogResult.OK)
                     {
-                        var path = dialog.SelectedPath;
+                        _path = dialog.SelectedPath;
 
                         string[] supportedExtensions = { ".bmp", ".jpeg", ".jpg", ".png", ".tiff" };
-                        var files = Directory.GetFiles(path, "*.*").Where(s =>
+                        var files = Directory.GetFiles(_path, "*.*").Where(s =>
                         {
                             var extension = Path.GetExtension(s);
                             return extension != null && supportedExtensions.Contains(extension.ToLower());
@@ -276,8 +276,8 @@ namespace SceneEnhancementLabeling.ViewModel
         public ICommand StartCommand => _startCommand ?? (_startCommand = new RelayCommand(DoProcess));
 
         private int _binH = 10;
-        private int _binS = 2;
-        private int _binV = 2;
+        private int _binS = 5;
+        private int _binV = 1;
 
         private void DoProcess()
         {
@@ -325,13 +325,14 @@ namespace SceneEnhancementLabeling.ViewModel
 
             // var colorlist = new List<Color>();
             var hsvlist = new List<Tuple<double, double, double>>();
-            for (int i = 0; i < 5; i++)
+            int n = ordered_binmap.Count > 5 ? 5 : ordered_binmap.Count;
+            for (int i = 0; i < n; i++)
             {
                 var tmp = ordered_binmap.ElementAt(i).Value;
                 hsvlist.Add(new Tuple<double, double, double>(tmp.Average(v => v.Item1), tmp.Average(v => v.Item2), tmp.Average(v => v.Item3)));
             }
 
-            hsvlist = hsvlist.OrderBy(v => v.Item1).ToList();
+            //hsvlist = hsvlist.OrderBy(v => v.Item1).ToList();
 
             Color0 = new SolidColorBrush(Hsv2Rgb(hsvlist[0].Item1, hsvlist[0].Item2, hsvlist[0].Item3));
             Color1 = new SolidColorBrush(Hsv2Rgb(hsvlist[1].Item1, hsvlist[1].Item2, hsvlist[1].Item3));
@@ -397,5 +398,53 @@ namespace SceneEnhancementLabeling.ViewModel
                 return Color.FromArgb(255, v, p, q);
 
         }
+
+        private RelayCommand _extractBatch;
+        public ICommand BatchExtractSave => _extractBatch ?? (_extractBatch = new RelayCommand(BatchExtractAndSave));
+
+        private void BatchExtractAndSave()
+        {
+            try
+            {
+                FileStream fs = new FileStream(_path + "/5color.txt", FileMode.Create);
+                StreamWriter sw = new StreamWriter(fs);
+                
+                // _selectedIndex = 0;
+                for (int i = 0; i < _images.Count; i++)
+                {
+                    var file = _images[i];
+                    BitmapImage bitmap = new BitmapImage();
+                    bitmap.BeginInit();
+                    bitmap.CacheOption = BitmapCacheOption.OnLoad;
+                    bitmap.UriSource = new Uri(file.Path, UriKind.Absolute);
+                    bitmap.EndInit();
+                    Bitmap = bitmap;
+                    GetPixels(bitmap);
+                    DoProcess();
+                    sw.Write(_images[i].FileName);
+                    sw.Write(" {0} {1} {2}", Color0.Color.R, Color0.Color.G, Color0.Color.B);
+                    sw.Write(" {0} {1} {2}", Color1.Color.R, Color1.Color.G, Color1.Color.B);
+                    sw.Write(" {0} {1} {2}", Color2.Color.R, Color2.Color.G, Color2.Color.B);
+                    sw.Write(" {0} {1} {2}", Color3.Color.R, Color3.Color.G, Color3.Color.B);
+                    sw.Write(" {0} {1} {2}", Color4.Color.R, Color4.Color.G, Color4.Color.B);
+                    sw.Write("\n");
+                }
+                sw.Flush();
+                sw.Close();
+                fs.Close();
+            }
+            catch (Exception)
+            {
+                
+                throw;
+            }
+            
+            
+
+
+
+
+        }
+
     }
 }
