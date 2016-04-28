@@ -101,7 +101,7 @@
                 <Button Content="Browse..." Width="100" Height="30" Command="{Binding OpenFolderCommand}" Visibility="{Binding IsBrowseEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <Grid Margin="12">
                     <Grid>
-                        <Image x:Name="Image" Source="{Binding Bitmap}" Stretch="Uniform">
+                        <Image x:Name="Image" Source="{Binding Bitmap}" Stretch="Uniform" PreviewMouseWheel="Image_OnPreviewMouseWheel">
                             <i:Interaction.Behaviors>
                                 <common:ImageBehaviorMouseDownPointSampleToColor SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
                                 <common:ImageBehaviorMouseDownPointToPopup IsPopupOpen="{Binding IsPopOpen, Mode=TwoWay}" IsEnabled="{Binding IsComponentLabelStepEnabled, Mode=TwoWay}"/>

@@ -30,7 +30,7 @@ namespace SceneEnhancementLabeling.View
             InitializeComponent();
             ShowMagnifier();
         }
-        
+
         private void MySaveCommand(object sender, ExecutedRoutedEventArgs e)
         {
             var vm = DataContext as LabelingViewModel;
@@ -48,7 +48,7 @@ namespace SceneEnhancementLabeling.View
             var vm = DataContext as LabelingViewModel;
             vm?.OpenOutputCommand.Execute(null);
         }
-        
+
         //private void PreviousStepBtn_OnClick(object sender, RoutedEventArgs e)
         //{
         //    ShowMagnifer();
@@ -86,7 +86,7 @@ namespace SceneEnhancementLabeling.View
                 magnifier.Visibility = Visibility.Collapsed;
             }
         }
-        
+
         private void ColorPlatte_OnMouseUp(object sender, MouseButtonEventArgs e)
         {
             var vm = DataContext as LabelingViewModel;
@@ -190,6 +190,49 @@ namespace SceneEnhancementLabeling.View
             if (context != null)
             {
                 vm.SelectedColor = context.Color;
+            }
+        }
+
+        private void Image_OnPreviewMouseWheel(object sender, MouseWheelEventArgs e)
+        {
+            var magnifier = MagnifierManager.GetMagnifier(Image);
+            if (magnifier != null)
+            {
+                bool handle = (Keyboard.Modifiers & ModifierKeys.Control) > 0;
+                if (handle)
+                {
+                    var zoom = magnifier.ZoomFactor;
+                    zoom -= e.Delta*0.001;
+                    if (zoom < 0.2)
+                    {
+                        magnifier.ZoomFactor = 0.2;
+                    }
+                    else if (zoom > 0.8)
+                    {
+                        magnifier.ZoomFactor = 0.8;
+                    }
+                    else
+                    {
+                        magnifier.ZoomFactor = zoom;
+                    }
+                    return;
+                }
+
+
+                var radius = magnifier.Radius;
+                radius += e.Delta * 0.1;
+                if (radius < 30)
+                {
+                    magnifier.Radius = 30;
+                }
+                else if (radius > 300)
+                {
+                    magnifier.Radius = 300;
+                }
+                else
+                {
+                    magnifier.Radius = radius;
+                }
             }
         }
     }
