@@ -28,7 +28,7 @@ namespace SceneEnhancementLabeling.View
         public LabelingPage()
         {
             InitializeComponent();
-            ShowMagnifer();
+            ShowMagnifier();
         }
         
         private void MySaveCommand(object sender, ExecutedRoutedEventArgs e)
@@ -49,24 +49,24 @@ namespace SceneEnhancementLabeling.View
             vm?.OpenOutputCommand.Execute(null);
         }
         
-        private void PreviousStepBtn_OnClick(object sender, RoutedEventArgs e)
-        {
-            ShowMagnifer();
-        }
+        //private void PreviousStepBtn_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    ShowMagnifer();
+        //}
 
-        private void NextStepBtn_OnClick(object sender, RoutedEventArgs e)
-        {
-            HideMagnifer();
-        }
+        //private void NextStepBtn_OnClick(object sender, RoutedEventArgs e)
+        //{
+        //    HideMagnifer();
+        //}
 
-        private void ShowMagnifer()
+        private void ShowMagnifier()
         {
-            var magnifer = MagnifierManager.GetMagnifier(Image);
-            if (magnifer == null)
+            var magnifier = MagnifierManager.GetMagnifier(Image);
+            if (magnifier == null)
             {
                 MagnifierManager.SetMagnifier(Image, new Magnifier
                 {
-                    Radius = 150,
+                    Radius = 70,
                     BorderBrush = new SolidColorBrush(Colors.Red),
                     BorderThickness = new Thickness(4),
                     ZoomFactor = 0.4
@@ -74,16 +74,16 @@ namespace SceneEnhancementLabeling.View
             }
             else
             {
-                magnifer.Visibility = Visibility.Visible;
+                magnifier.Visibility = Visibility.Visible;
             }
         }
 
         private void HideMagnifer()
         {
-            var magnifer = MagnifierManager.GetMagnifier(Image);
-            if (magnifer != null)
+            var magnifier = MagnifierManager.GetMagnifier(Image);
+            if (magnifier != null)
             {
-                magnifer.Visibility = Visibility.Collapsed;
+                magnifier.Visibility = Visibility.Collapsed;
             }
         }
         
