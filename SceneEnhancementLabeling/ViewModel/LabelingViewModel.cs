@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 using System.Text;
 using System.Windows;
+using System.Windows.Controls;
 using System.Windows.Forms;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -353,6 +354,18 @@ namespace SceneEnhancementLabeling.ViewModel
 
         #region Color Labeling
 
+        private bool _isColorPopOpen;
+
+        public bool IsColorPopOpen
+        {
+            get { return _isColorPopOpen; }
+            set
+            {
+                _isColorPopOpen = value;
+                RaisePropertyChanged();
+            }
+        }
+
         private ObservableCollection<CategoryItem> _category;
 
         public ObservableCollection<CategoryItem> Category
@@ -468,7 +481,14 @@ namespace SceneEnhancementLabeling.ViewModel
                     ColorLabelingOutput = ColorLabelingOutput.Remove(startIndex, lineIndex - startIndex);
                 }
                 sb.AppendLine();
-                ColorLabelingOutput += sb.ToString();
+                if (startIndex > -1)
+                {
+                    ColorLabelingOutput = ColorLabelingOutput.Insert(startIndex, sb.ToString());
+                }
+                else
+                {
+                    ColorLabelingOutput += sb.ToString();
+                }
 
                 sb.Clear();
                 sb.AppendLine();
@@ -477,12 +497,35 @@ namespace SceneEnhancementLabeling.ViewModel
 
                 if (!string.IsNullOrEmpty(ComponentLabelingOutput))
                 {
-                    OutputContent = ColorLabelingOutput + sb.ToString() + ComponentLabelingOutput;
+                    OutputContent = ColorLabelingOutput + sb + ComponentLabelingOutput;
                 }
                 else
                 {
                     OutputContent = ColorLabelingOutput;
                 }
+            }
+        }
+
+        private ObservableCollection<SolidColorBrush> _preferenceColors = new ObservableCollection<SolidColorBrush>();
+
+        public ObservableCollection<SolidColorBrush> PreferenceColors
+        {
+            get { return _preferenceColors; }
+            set
+            {
+                _preferenceColors = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private RelayCommand _addPreferenceColorCommand;
+        public ICommand AddPreferenceColorCommand => _addPreferenceColorCommand ?? (_addPreferenceColorCommand = new RelayCommand(AddPreferenceColor));
+
+        private void AddPreferenceColor()
+        {
+            if (SelectedColor != Colors.Transparent)
+            {
+                PreferenceColors.Add(new SolidColorBrush(SelectedColor));
             }
         }
 

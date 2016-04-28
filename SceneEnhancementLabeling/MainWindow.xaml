@@ -6,7 +6,7 @@
         xmlns:local="clr-namespace:SceneEnhancementLabeling"
         xmlns:viewModel="clr-namespace:SceneEnhancementLabeling.ViewModel"
         mc:Ignorable="d"
-        Title="MainWindow" Height="768" Width="1280"
+        Title="Scene Enhancement Labeling" Height="768" Width="1280"
         WindowState="Maximized" WindowStyle="SingleBorderWindow"
         DataContext="{Binding Main, Source={StaticResource Locator}}">
     
