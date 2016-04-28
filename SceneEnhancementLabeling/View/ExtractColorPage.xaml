@@ -60,6 +60,7 @@
                 <StackPanel Orientation="Horizontal" Grid.Row="1" Grid.Column="0">
                     <Button Content="Browse..." Width="100" Height="50" Command="{Binding OpenFolderCommand}" Margin="10"/>
                     <Button Content="Start" Command="{Binding StartCommand}" Width="100" Height="50" Margin="10"/>
+                    <Button Content="BatchExtract" Command="{Binding BatchExtractSave}" Width="100" Height="50" Margin="10"/>
                 </StackPanel>
             </Grid>
         </DockPanel>

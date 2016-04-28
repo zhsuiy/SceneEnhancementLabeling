@@ -1,6 +1,35 @@
 [
-	{"id":0, "name": "Bed"},
-	{"id":1, "name": "Desk"},
-	{"id":2, "name": "Closet"},
-	{"id":3, "name": "NightTable"}
+	{"id":0, "name": "Wall"},
+	{"id":1, "name": "WallPhoto"},
+	{"id":2, "name": "Floor"},
+	{"id":3, "name": "Carpet"},
+	{"id":4, "name": "Bed"},	
+	{"id":5, "name": "BedPillow"},
+	{"id":6, "name": "BedSheet"},
+	{"id":7, "name": "NightTable"},
+	{"id":8, "name": "Bench"},
+	{"id":9, "name": "Desk"},
+	{"id":10, "name": "Chair"},	
+	{"id":11, "name": "Cabinet"},
+	{"id":12, "name": "Closet"},
+	{"id":13, "name": "SideTable"},
+	{"id":14, "name": "Dresser"},
+	{"id":15, "name": "Window"},
+	{"id":16, "name": "Curtain"}	
 ]
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
