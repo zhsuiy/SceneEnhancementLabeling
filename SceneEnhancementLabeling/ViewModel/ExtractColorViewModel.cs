@@ -333,12 +333,12 @@ namespace SceneEnhancementLabeling.ViewModel
             }
 
             //hsvlist = hsvlist.OrderBy(v => v.Item1).ToList();
-
-            Color0 = new SolidColorBrush(Hsv2Rgb(hsvlist[0].Item1, hsvlist[0].Item2, hsvlist[0].Item3));
-            Color1 = new SolidColorBrush(Hsv2Rgb(hsvlist[1].Item1, hsvlist[1].Item2, hsvlist[1].Item3));
-            Color2 = new SolidColorBrush(Hsv2Rgb(hsvlist[2].Item1, hsvlist[2].Item2, hsvlist[2].Item3));
-            Color3 = new SolidColorBrush(Hsv2Rgb(hsvlist[3].Item1, hsvlist[3].Item2, hsvlist[3].Item3));
-            Color4 = new SolidColorBrush(Hsv2Rgb(hsvlist[4].Item1, hsvlist[4].Item2, hsvlist[4].Item3));
+            
+            Color0 = new SolidColorBrush(Hsv2Rgb(hsvlist[0%n].Item1, hsvlist[0 % n].Item2, hsvlist[0 % n].Item3));
+            Color1 = new SolidColorBrush(Hsv2Rgb(hsvlist[1%n].Item1, hsvlist[1 % n].Item2, hsvlist[1 % n].Item3));
+            Color2 = new SolidColorBrush(Hsv2Rgb(hsvlist[2%n].Item1, hsvlist[2 % n].Item2, hsvlist[2 % n].Item3));
+            Color3 = new SolidColorBrush(Hsv2Rgb(hsvlist[3%n].Item1, hsvlist[3 % n].Item2, hsvlist[3 % n].Item3));
+            Color4 = new SolidColorBrush(Hsv2Rgb(hsvlist[4%n].Item1, hsvlist[4 % n].Item2, hsvlist[4 % n].Item3));
 
         }
 
