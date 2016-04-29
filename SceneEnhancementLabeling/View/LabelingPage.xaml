@@ -88,8 +88,8 @@
                 </ListView.ItemTemplate>
             </ListView>
             <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="36,0">
-                <Button Content="Previous Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabeld}" Click="PreviousStepBtn_OnClick"/>
-                <Button Content="Next Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled}" Click="NextStepBtn_OnClick"/>
+                <Button Content="Previous Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding PreviousStepCommand}" IsEnabled="{Binding IsPreviousStepEnabeld}"/>
+                <Button Content="Next Step" Margin="12,0,0,0" Width="120" Height="30" HorizontalAlignment="Right" Command="{Binding NextStepCommand}" IsEnabled="{Binding IsNextStepEnabled}"/>
             </StackPanel>
         </Grid>
         <Grid Grid.Row="1" Margin="12,0">
@@ -101,7 +101,7 @@
                 <Button Content="Browse..." Width="100" Height="30" Command="{Binding OpenFolderCommand}" Visibility="{Binding IsBrowseEnabled, Converter={StaticResource BooleanToVisibilityConverter}}"/>
                 <Grid Margin="12">
                     <Grid>
-                        <Image x:Name="Image" Source="{Binding Bitmap}" Stretch="Uniform">
+                        <Image x:Name="Image" Source="{Binding Bitmap}" Stretch="Uniform" PreviewMouseWheel="Image_OnPreviewMouseWheel">
                             <i:Interaction.Behaviors>
                                 <common:ImageBehaviorMouseDownPointSampleToColor SelectedColor="{Binding SelectedColor, Mode=TwoWay}"/>
                                 <common:ImageBehaviorMouseDownPointToPopup IsPopupOpen="{Binding IsPopOpen, Mode=TwoWay}" IsEnabled="{Binding IsComponentLabelStepEnabled, Mode=TwoWay}"/>
