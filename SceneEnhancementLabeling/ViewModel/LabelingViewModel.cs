@@ -390,6 +390,116 @@ namespace SceneEnhancementLabeling.ViewModel
             }
         }
 
+        public void UpdateOutputByColors(bool updateColor = true)
+        {
+            StringBuilder sb = new StringBuilder();
+            if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.StartsWith("Furniture Color"))
+            {
+                sb.AppendLine("Furniture Color");
+            }
+
+            var item = Category[CategoryIndex];
+            var head = item.Name + " =";
+            var breakLine = "\r\n";
+            int startIndex = -1;
+            int lineIndex = -1;
+            if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.Contains(head))
+            {
+                sb.AppendFormat("{0} =", item.Name);
+            }
+            else
+            {
+                startIndex = ColorLabelingOutput.IndexOf(head, StringComparison.Ordinal) + head.Length;
+                lineIndex = ColorLabelingOutput.IndexOf(breakLine, startIndex, StringComparison.Ordinal) + breakLine.Length;
+            }
+            if (item.IsChecked0)
+            {
+                if (updateColor)
+                {
+                    item.Color0 = new SolidColorBrush(SelectedColor);
+                }
+                sb.AppendFormat(" {0} {1} {2} {3:P2}", SelectedColor.R, SelectedColor.G, SelectedColor.B, item.Color0Percent);
+
+                if (item.Color1.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B, item.Color1Percent);
+                }
+                if (item.Color2.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B, item.Color2Percent);
+                }
+            }
+            else if (item.IsChecked1)
+            {
+                if (item.Color0.Color == Colors.Transparent)
+                {
+                    System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
+                    return;
+                }
+                if (updateColor)
+                {
+                    item.Color1 = new SolidColorBrush(SelectedColor);
+                }
+                if (item.Color0.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B, item.Color0Percent);
+                }
+                sb.AppendFormat(" {0} {1} {2} {3:P2}", SelectedColor.R, SelectedColor.G, SelectedColor.B, item.Color1Percent);
+                if (item.Color2.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B, item.Color2Percent);
+                }
+            }
+            else if (item.IsChecked2)
+            {
+                if (item.Color0.Color == Colors.Transparent || item.Color1.Color == Colors.Transparent)
+                {
+                    System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
+                    return;
+                }
+                if (updateColor)
+                {
+                    item.Color2 = new SolidColorBrush(SelectedColor);
+                }
+                if (item.Color0.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B, item.Color0Percent);
+                }
+                if (item.Color1.Color != Colors.Transparent)
+                {
+                    sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B, item.Color1Percent);
+                }
+                sb.AppendFormat(" {0} {1} {2} {3:P2}", SelectedColor.R, SelectedColor.G, SelectedColor.B, item.Color2Percent);        
+            }
+            if (lineIndex >= startIndex && lineIndex > -1 && startIndex > -1)
+            {
+                ColorLabelingOutput = ColorLabelingOutput.Remove(startIndex, lineIndex - startIndex);
+            }
+            sb.AppendLine();
+            if (startIndex > -1)
+            {
+                ColorLabelingOutput = ColorLabelingOutput.Insert(startIndex, sb.ToString());
+            }
+            else
+            {
+                ColorLabelingOutput += sb.ToString();
+            }
+
+            sb.Clear();
+            sb.AppendLine();
+            sb.AppendLine();
+            sb.AppendLine();
+
+            if (!string.IsNullOrEmpty(ComponentLabelingOutput))
+            {
+                OutputContent = ColorLabelingOutput + sb + ComponentLabelingOutput;
+            }
+            else
+            {
+                OutputContent = ColorLabelingOutput;
+            }
+        }
+
         private Color _selectedColor;
 
         public Color SelectedColor
@@ -406,103 +516,7 @@ namespace SceneEnhancementLabeling.ViewModel
                 RaisePropertyChanged();
 
                 IsEditingColor = true;
-
-                StringBuilder sb = new StringBuilder();
-                if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.StartsWith("Furniture Color"))
-                {
-                    sb.AppendLine("Furniture Color");
-                }
-
-                var item = Category[CategoryIndex];
-                var head = item.Name + " =";
-                var breakLine = "\r\n";
-                int startIndex = -1;
-                int lineIndex = -1;
-                if (string.IsNullOrEmpty(ColorLabelingOutput) || !ColorLabelingOutput.Contains(head))
-                {
-                    sb.AppendFormat("{0} =", item.Name);
-                }
-                else
-                {
-                    startIndex = ColorLabelingOutput.IndexOf(head, StringComparison.Ordinal) + head.Length;
-                    lineIndex = ColorLabelingOutput.IndexOf(breakLine, startIndex, StringComparison.Ordinal) + breakLine.Length;
-                }
-                if (item.IsChecked0)
-                {
-                    item.Color0 = new SolidColorBrush(value);
-                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
-                    if (item.Color1.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
-                    }
-                    if (item.Color2.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
-                    }
-                }
-                else if (item.IsChecked1)
-                {
-                    if (item.Color0.Color == Colors.Transparent)
-                    {
-                        System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
-                        return;
-                    }
-                    item.Color1 = new SolidColorBrush(value);
-                    if (item.Color0.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
-                    }
-                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
-                    if (item.Color2.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color2.Color.R, item.Color2.Color.G, item.Color2.Color.B);
-                    }
-                }
-                else if (item.IsChecked2)
-                {
-                    if (item.Color0.Color == Colors.Transparent || item.Color1.Color == Colors.Transparent)
-                    {
-                        System.Windows.MessageBox.Show("Cannot set this color because the previous color never be set.");
-                        return;
-                    }
-                    item.Color2 = new SolidColorBrush(value);
-                    if (item.Color0.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color0.Color.R, item.Color0.Color.G, item.Color0.Color.B);
-                    }
-                    if (item.Color1.Color != Colors.Transparent)
-                    {
-                        sb.AppendFormat(" {0} {1} {2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B);
-                    }
-                    sb.AppendFormat(" {0} {1} {2}", value.R, value.G, value.B);
-                }
-                if (lineIndex >= startIndex && lineIndex > -1 && startIndex > -1)
-                {
-                    ColorLabelingOutput = ColorLabelingOutput.Remove(startIndex, lineIndex - startIndex);
-                }
-                sb.AppendLine();
-                if (startIndex > -1)
-                {
-                    ColorLabelingOutput = ColorLabelingOutput.Insert(startIndex, sb.ToString());
-                }
-                else
-                {
-                    ColorLabelingOutput += sb.ToString();
-                }
-
-                sb.Clear();
-                sb.AppendLine();
-                sb.AppendLine();
-                sb.AppendLine();
-
-                if (!string.IsNullOrEmpty(ComponentLabelingOutput))
-                {
-                    OutputContent = ColorLabelingOutput + sb + ComponentLabelingOutput;
-                }
-                else
-                {
-                    OutputContent = ColorLabelingOutput;
-                }
+                UpdateOutputByColors();
             }
         }
 

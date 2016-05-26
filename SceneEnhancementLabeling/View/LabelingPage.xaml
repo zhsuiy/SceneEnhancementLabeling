@@ -140,25 +140,41 @@
                                             <RowDefinition/>
                                             <RowDefinition/>
                                             <RowDefinition/>
+                                            <RowDefinition Height="Auto"/>
                                         </Grid.RowDefinitions>
                                         <common:RadioButtonEx IsCheckedReal="{Binding IsChecked0}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="0">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color0, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color0, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
+                                                <TextBlock Text="{Binding Color0Percent, StringFormat=P2}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </common:RadioButtonEx>
                                         <common:RadioButtonEx Grid.Row="1" IsCheckedReal="{Binding IsChecked1}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="1">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color1, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color1, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
+                                                <TextBlock Text="{Binding Color1Percent, StringFormat=P2}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </common:RadioButtonEx>
                                         <common:RadioButtonEx Grid.Row="2" IsCheckedReal="{Binding IsChecked2}" PreviewMouseLeftButtonUp="ColorPlatte_OnMouseUp" Tag="2">
                                             <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
                                                 <Rectangle Fill="{Binding Color2, Mode=TwoWay}" Stroke="Black" StrokeThickness="1" Width="100" Height="50"/>
                                                 <TextBlock Text="{Binding Color2, Mode=TwoWay}" VerticalAlignment="Center" Margin="12"/>
+                                                <TextBlock Text="{Binding Color2Percent, StringFormat=P2}" FontWeight="Bold" FontSize="20" HorizontalAlignment="Right" VerticalAlignment="Center"/>
                                             </StackPanel>
                                         </common:RadioButtonEx>
+                                        <xctk:RangeSlider 
+                                            Grid.Row="3" 
+                                            Margin="0,20"
+                                            HigherRangeBackground="{Binding Color2}"
+                                            RangeBackground="{Binding Color1}"
+                                            LowerRangeBackground="{Binding Color0}"
+                                            LowerValue="{Binding LowerValue, Mode=TwoWay}"
+                                            HigherValue="{Binding HigherValue, Mode=TwoWay}" 
+                                            Minimum="0" 
+                                            Maximum="100" 
+                                            LowerValueChanged="RangeSlider_OnLowerValueChanged"
+                                            HigherValueChanged="RangeSlider_OnHigherValueChanged"/>
                                     </Grid>
                                 </DataTemplate>
                             </TabControl.ContentTemplate>
