@@ -1,7 +1,7 @@
 ﻿[
   {
     "key": "A",
-    "data": [      
+    "data": [
       {
         "name": "AeolianBells",
         "name_cn": "风铃"
@@ -10,10 +10,10 @@
         "name": "Angel",
         "name_cn": "天使翅膀"
       },
-	  {
+      {
         "name": "AutomobileModel",
         "name_cn": "车模型"
-      }  
+      }
     ]
   },
   {
@@ -23,26 +23,26 @@
         "name": "Backpack",
         "name_cn": "登山包"
       },
-	  {
+      {
         "name": "BalletShoe",
         "name_cn": "芭蕾舞鞋"
       },
-	  {
+      {
         "name": "Basketball",
         "name_cn": "篮球"
       },
-	  {
+      {
         "name": "Bear",
         "name_cn": "熊"
       },
-	  {
+      {
         "name": "Book",
         "name_cn": "书"
       },
-	  {
+      {
         "name": "Butterfly",
         "name_cn": "蝴蝶"
-      } 	  
+      }
     ]
   },
   {
@@ -52,18 +52,18 @@
         "name": "Candle",
         "name_cn": "蜡烛"
       },
-	  {
+      {
         "name": "Cap",
         "name_cn": "鸭舌帽"
       },
-	  {
+      {
         "name": "Clock",
         "name_cn": "闹钟"
       },
-	  {
+      {
         "name": "Cup",
         "name_cn": "水杯"
-      }	   
+      }
     ]
   },
   {
@@ -73,14 +73,14 @@
         "name": "DinosaurModel",
         "name_cn": "恐龙模型"
       },
-	  {
+      {
         "name": "Doll",
         "name_cn": "娃娃"
       },
-	  {
+      {
         "name": "Drum",
         "name_cn": "架子鼓"
-      } 
+      }
     ]
   },
   {
@@ -90,7 +90,7 @@
         "name": "Earphone",
         "name_cn": "耳机"
       },
-	  {
+      {
         "name": "EiffelTower",
         "name_cn": "埃菲尔铁塔"
       }
@@ -103,14 +103,14 @@
         "name": "Figurine",
         "name_cn": "艺术摆件"
       },
-	  {
+      {
         "name": "Flower",
         "name_cn": "花"
       },
-	  {
+      {
         "name": "Football",
         "name_cn": "足球/橄榄球"
-      }	  
+      }
     ]
   },
   {
@@ -120,14 +120,14 @@
         "name": "GameHandle",
         "name_cn": "游戏手柄"
       },
-	  {
+      {
         "name": "GiftBox",
         "name_cn": "礼物盒"
       },
-	  {
+      {
         "name": "Guitar",
         "name_cn": "吉他"
-      }	  
+      }
     ]
   },
   {
@@ -136,10 +136,6 @@
       {
         "name": "Heart",
         "name_cn": "爱心"
-      },
-	  {
-        "name": "HelicopterModel",
-        "name_cn": "直升机模型"
       }
     ]
   },
@@ -150,14 +146,14 @@
         "name": "Lamp",
         "name_cn": "台灯"
       },
-	  {
+      {
         "name": "Laptop",
         "name_cn": "笔记本"
       },
-	  {
+      {
         "name": "LoudSpeaker",
         "name_cn": "音箱"
-      }	  
+      }
     ]
   },
   {
@@ -167,26 +163,26 @@
         "name": "Magazine",
         "name_cn": "杂志"
       },
-	  {
+      {
         "name": "MakeUp",
         "name_cn": "化妆品"
       },
-	  {
+      {
         "name": "Map",
         "name_cn": "地球仪/地图"
       },
-	  {
+      {
         "name": "Mario",
         "name_cn": "马里奥"
       },
-	  {
+      {
         "name": "Mirror",
         "name_cn": "镜子"
       },
-	  {
+      {
         "name": "MechanicalModel",
         "name_cn": "机械模型"
-      } 
+      }
     ]
   },
   {
@@ -202,22 +198,26 @@
     "key": "P",
     "data": [
       {
+        "name": "Pen",
+        "name_cn": "笔"
+      },
+      {
         "name": "Perfume",
         "name_cn": "香水"
       },
-	  {
+      {
         "name": "PhotoFrame",
         "name_cn": "相框"
       },
-	  {
+      {
         "name": "Planet",
         "name_cn": "星球"
       },
-	  {
+      {
         "name": "Plant",
         "name_cn": "盆栽"
       },
-	  {
+      {
         "name": "PoloShirt",
         "name_cn": "球衣"
       }
