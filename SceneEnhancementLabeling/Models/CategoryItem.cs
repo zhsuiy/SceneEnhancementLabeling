@@ -62,6 +62,83 @@ namespace SceneEnhancementLabeling.Models
             }
         }
 
+        private double _lowerValue;
+
+        public double LowerValue
+        {
+            get { return _lowerValue; }
+            set
+            {
+                if (_lowerValue != value)
+                {
+                    UpdatePercentage(value, HigherValue);
+                }
+                _lowerValue = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private double _higherValue;
+
+        public double HigherValue
+        {
+            get { return _higherValue; }
+            set
+            {
+                if (_higherValue != value)
+                {
+                    UpdatePercentage(LowerValue, value);
+                }
+                _higherValue = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        public void UpdatePercentage(double low, double high)
+        {
+            Color0Percent = low / 100.0;
+            Color1Percent = (high - low) / 100.0;
+            Color2Percent = (100 - high) / 100.0;
+        }
+
+
+        private double _color0Percent;
+
+        public double Color0Percent
+        {
+            get { return _color0Percent; }
+            set
+            {
+                _color0Percent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private double _color1Percent;
+
+        public double Color1Percent
+        {
+            get { return _color1Percent; }
+            set
+            {
+                _color1Percent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+        private double _color2Percent;
+
+        public double Color2Percent
+        {
+            get { return _color2Percent; }
+            set
+            {
+                _color2Percent = value;
+                RaisePropertyChanged();
+            }
+        }
+
+
         private bool _isChecked0 = true;
 
         public bool IsChecked0

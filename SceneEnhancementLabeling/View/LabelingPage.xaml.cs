@@ -235,5 +235,69 @@ namespace SceneEnhancementLabeling.View
                 }
             }
         }
+
+        private void RangeSlider_OnLowerValueChanged(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as LabelingViewModel;
+            if (vm == null)
+            {
+                return;
+            }
+            var slider = sender as RangeSlider;
+            var categoryItem = slider?.DataContext as CategoryItem;
+            if (categoryItem == null || categoryItem != vm.Category[vm.CategoryIndex])
+            {
+                return;
+            }
+            if (categoryItem.Color0.Color == Colors.Transparent)
+            {
+                categoryItem.Color0Percent = categoryItem.Color1Percent = categoryItem.Color2Percent = 0;
+                return;
+            }
+            if (categoryItem.Color1.Color == Colors.Transparent)
+            {
+                categoryItem.Color0Percent = 1;
+                categoryItem.Color1Percent = categoryItem.Color2Percent = 0;
+            }
+            if (categoryItem.Color2.Color == Colors.Transparent)
+            {
+                categoryItem.Color2Percent = 0;
+            }
+            vm.UpdateOutputByColors(false);
+        }
+
+        private void RangeSlider_OnHigherValueChanged(object sender, RoutedEventArgs e)
+        {
+            var vm = DataContext as LabelingViewModel;
+            if (vm == null)
+            {
+                return;
+            }
+            var slider = sender as RangeSlider;
+            var categoryItem = slider?.DataContext as CategoryItem;
+            if (categoryItem == null || categoryItem != vm.Category[vm.CategoryIndex])
+            {
+                return;
+            }
+            if (categoryItem.Color0.Color == Colors.Transparent)
+            {
+                categoryItem.Color0Percent = categoryItem.Color1Percent = categoryItem.Color2Percent = 0;
+                return;
+            }
+            if (categoryItem.Color1.Color == Colors.Transparent)
+            {
+                categoryItem.HigherValue = 100;
+                categoryItem.Color0Percent = 1;
+                categoryItem.Color1Percent = categoryItem.Color2Percent = 0;
+            }
+            if (categoryItem.Color2.Color == Colors.Transparent)
+            {
+                categoryItem.HigherValue = 100;
+                categoryItem.Color2Percent = 0;
+                return;
+            }
+
+            vm.UpdateOutputByColors(false);
+        }
     }
 }
