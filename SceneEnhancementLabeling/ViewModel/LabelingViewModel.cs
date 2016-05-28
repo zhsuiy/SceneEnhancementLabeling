@@ -390,6 +390,40 @@ namespace SceneEnhancementLabeling.ViewModel
             }
         }
 
+        private void InitPercentage()
+        {
+            var item = Category[CategoryIndex];
+            if (item.Color0.Color == Colors.Transparent)
+            {
+                return;
+            }
+            if (item.Color1.Color == Colors.Transparent)
+            {
+                if (!item.IsColor0PercentInited)
+                {
+                    item.IsColor0PercentInited = true;
+                    item.LowerValue = item.HigherValue = 100;
+                }
+                return;
+            }
+            if (item.Color2.Color == Colors.Transparent)
+            {
+                if (!item.IsColor1PercentInited)
+                {
+                    item.IsColor1PercentInited = true;
+                    item.LowerValue = 50;
+                    item.HigherValue = 100;
+                }
+                return;
+            }
+            if (!item.IsColor2PercentInited)
+            {
+                item.IsColor2PercentInited = true;
+                item.LowerValue = 33.3;
+                item.HigherValue = 66.6;
+            }
+        }
+
         public void UpdateOutputByColors(bool updateColor = true)
         {
             StringBuilder sb = new StringBuilder();
@@ -419,7 +453,6 @@ namespace SceneEnhancementLabeling.ViewModel
                     item.Color0 = new SolidColorBrush(SelectedColor);
                 }
                 sb.AppendFormat(" {0} {1} {2} {3:P2}", SelectedColor.R, SelectedColor.G, SelectedColor.B, item.Color0Percent);
-
                 if (item.Color1.Color != Colors.Transparent)
                 {
                     sb.AppendFormat(" {0} {1} {2} {3:P2}", item.Color1.Color.R, item.Color1.Color.G, item.Color1.Color.B, item.Color1Percent);
@@ -517,6 +550,7 @@ namespace SceneEnhancementLabeling.ViewModel
 
                 IsEditingColor = true;
                 UpdateOutputByColors();
+                InitPercentage();
             }
         }
 

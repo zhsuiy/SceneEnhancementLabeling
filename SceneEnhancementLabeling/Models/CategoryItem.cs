@@ -187,5 +187,9 @@ namespace SceneEnhancementLabeling.Models
                 RaisePropertyChanged();
             }
         }
+
+        public bool IsColor0PercentInited { get; set; }
+        public bool IsColor1PercentInited { get; set; }
+        public bool IsColor2PercentInited { get; set; }
     }
 }
